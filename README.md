@@ -1,5 +1,6 @@
 # trkl
 Reactive JavaScript programming in under 500 bytes (gzipped).
+
 Provides observables, Knockout-style computeds (with 'magical' dependency tracking), filters and reductions.
 
 Very hastily written. Don't take it too seriously.
