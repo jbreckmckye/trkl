@@ -64,6 +64,26 @@ describe('A computed', ()=> {
 		expect(c()).toBe(10);
 	});
 
+	it('Can handle dynamic dependencies', ()=> {
+		const a = trkl(1);
+		const b = trkl(2);
+		const relay = trkl();
+
+		const computation = trkl.computed(()=> {
+			if (relay()) {
+				return a();
+			} else {
+				return b();
+			}
+		});
+
+		relay(true);
+		expect(computation()).toBe(1);
+
+		relay(false);
+		expect(computation()).toBe(2);
+	})
+
 	it('Does not allow circular references', ()=> {
 		const a = trkl(1);
 		const b = trkl.computed(()=> {
