@@ -1,5 +1,6 @@
 # trkl
-Reactive JavaScript programming in under 500 bytes (gzipped)
+Reactive JavaScript programming in under 500 bytes (gzipped).
+Provides observables, Knockout-style computeds (with 'magical' dependency tracking), filters and reductions.
 
 Very hastily written. Don't take it too seriously.
 
@@ -35,7 +36,7 @@ Very hastily written. Don't take it too seriously.
     foo(100);
     // Console outputs 'Sum equals 108';
     
-    addition.destroy();
+    addition.destroy(); // stops computed running and allows dependencies to be garbage collected
     
     foo(0);
     bar(0);
