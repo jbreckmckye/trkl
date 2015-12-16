@@ -58,9 +58,12 @@ Very hastily written. Don't take it too seriously.
         return newValue % 2 !== 1;
     });
     
+    trackMutations.subscribe(newValue => {
+        console.log(newValue);
+    });
+    
     foo(5);
-    oddFoos(); // equals 5
+    // console outputs '5'
     foo(6);
-    oddFoos(); // still equals 5
     foo(3);
-    oddFoos(); // equals 3
+    // console outputs '3'
