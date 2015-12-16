@@ -106,14 +106,13 @@ describe('A scan', ()=> {
 
 	it('Performs a reduction against changes to an observable', ()=> {
 		const numbers = trkl();
-		const accumulator = [];
-		const recordNumbers = numbers.scan((tally, newValue) => {
-			tally.push(newValue);
-		}, accumulator);
+		const sum = numbers.scan((tally, newValue) => {
+			return tally + newValue;
+		}, 0);
 
 		numbers(1); numbers(2); numbers(3);
 
-		expect(accumulator).toEqual([1, 2, 3]); // N.B. does not include the original value
+		expect(sum()).toEqual(6);
 	});
 
 });

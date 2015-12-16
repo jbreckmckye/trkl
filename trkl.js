@@ -36,9 +36,9 @@
 		};
 
 		self.scan = function (reducer, accumulator) {
-			var reduction = trkl();
+			var reduction = trkl(accumulator);
 			self.subscribe(function (newValue) {
-				var accumulation = reducer(accumulator, newValue);
+				var accumulation = reducer(reduction(), newValue);
 				reduction(accumulation);
 			});
 			return reduction;
@@ -64,7 +64,7 @@
 
 		return self;
 	}
-	
+
 	trkl.computed = function (fn) {
 		var self = trkl();
 		var computationToken = {
