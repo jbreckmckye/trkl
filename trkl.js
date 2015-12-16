@@ -45,13 +45,14 @@
 		}
 	};
 
-	trkl.merge = function(sources) {
-		sources = Array.prototype.slice.call(arguments, 0);
-		var mergedStream = new Stream();
-		sources.forEach(function (source) {
-			source.subscribe(mergedStream);
+	trkl.filter = function(source, filter) {
+		var filteredStream = new Stream();
+		source.subscribe(function (newValue, oldValue) {
+			if (filter(newValue, oldValue)) {
+				filteredStream(newValue);
+			}
 		});
-		return mergedStream;
+		return filteredStream;
 	};
 
 	trkl.reduce = function(source, reducer, init) {
