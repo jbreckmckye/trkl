@@ -1,5 +1,5 @@
 # trkl
-Reactive JavaScript programming in under 500 bytes.
+Reactive JavaScript programming in under 500 bytes (gzipped)
 
 Very hastily written. Don't take it too seriously.
 
