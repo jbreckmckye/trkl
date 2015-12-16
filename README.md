@@ -7,6 +7,7 @@ For just a meagre **425 bytes** (minified and gzipped), you get
 - Knockout.js-style computeds with proper "magical" dependency tracking
 - maps
 - reductions / scans
+- circular reference detection
 
 It's more of a proof of concept than anything else - but quite fun to write!
 
@@ -88,7 +89,7 @@ If you've used Knockout computeds, you'll know exactly how these work. Here's an
     a(3);
     c(); // equals 3 + 2 = 5
 
-You don't have to provide anything to computed to notify if it of your dependencies. This differs from e.g. Flyd's dependent streams, where you have to remember to explicitly pass in all the observables your computation depends on.
+You don't have to provide anything to computed to notify if it of your dependencies. This differs from other libraries, where you have to remember to explicitly pass in all the observables your computation depends on (I'm looking at you, Flyd).
 
 Dependencies can even be dynamic!
 
@@ -110,3 +111,11 @@ Dependencies can even be dynamic!
     preference(); // 'I want pecan pie'
 
 In this instance, the computed 'preference' starts with only a subscription to 'firstChoice'. When - and only when - firstChoice is blanked out, 'preference' gets a subscription to 'secondChoice', too. This is a really powerful feature in Knockout and it's quite cool to know we can make it happen with a microlibrary.
+
+###What about circular references?
+
+If we have an observable *a* that informs an computed *b*, and then we have a new computed *c* that takes the value of *b* and inserts it into *a*, we get a triangular flow of information.
+
+Luckily, trkl will detect such instances and immediately throw an exception:
+
+    Circular reference detected
