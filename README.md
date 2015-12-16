@@ -52,7 +52,15 @@ Very hastily written. Don't take it too seriously.
     foo(8);
     trackMutations(); // [6, 8]
     
-    // MERGE
+    // FILTER
     
-    var allNumberUpdates = trkl.merge(foo, bar);
-    foo(5); foo(7); bar(9); // allNumberUpdates = 5, then 7, then 9
+    var oddFoos = trkl.filter(foo, (newValue, oldValue)=> {
+        return newValue % 2 !== 1;
+    });
+    
+    foo(5);
+    oddFoos(); // equals 5
+    foo(6);
+    oddFoos(); // still equals 5
+    foo(3);
+    oddFoos(); // equals 3
