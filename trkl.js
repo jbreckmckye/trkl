@@ -52,7 +52,7 @@
 					subscriber(value, oldValue);
 				});
 			}
-		};
+		}
 
 		function read () {
 			var runningComputation = computedTracker[computedTracker.length - 1];
