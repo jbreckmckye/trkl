@@ -19,11 +19,14 @@
 			}
 		};
 
-		self.subscribe = function (subscriber) {
+		self.subscribe = subscribe;
+
+		// declaring as a private function means the minifier can scrub its name on internal references
+		function subscribe(subscriber) {
 			if (absent(subscribers, subscriber)) {
 				subscribers.push(subscriber);
 			}
-		};
+		}
 
 		self.unsubscribe = function (subscriber) {
 			remove(subscribers, subscriber);
@@ -37,7 +40,7 @@
 
 		self.scan = function (reducer, accumulator) {
 			var reduction = trkl(accumulator);
-			self.subscribe(function (newValue) {
+			subscribe(function (newValue) {
 				var accumulation = reducer(reduction(), newValue);
 				reduction(accumulation);
 			});
@@ -57,10 +60,10 @@
 		function read () {
 			var runningComputation = computedTracker[computedTracker.length - 1];
 			if (runningComputation) {
-				self.subscribe(runningComputation.subscriber);
+				subscribe(runningComputation.subscriber);
 			}
 			return value;
-		};
+		}
 
 		return self;
 	}
