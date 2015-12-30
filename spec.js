@@ -99,29 +99,6 @@ describe('A computed', ()=> {
 	});
 });
 
-describe('A map', ()=> {
-
-	it('Transforms an observable', ()=> {
-		const numbers = trkl(1);
-		const numbersDoubled = numbers.map(x => {
-			return x*2;
-		});
-
-		expect(numbersDoubled()).toBe(2);
-	});
-
-	it('Transforms updates', ()=> {
-		const numbers = trkl(1);
-		const numbersDoubled = numbers.map(x => {
-			return x*2;
-		});
-
-		numbers(5);
-
-		expect(numbersDoubled()).toBe(10);
-	});
-});
-
 describe('Observable history', ()=> {
 	let numbers, values;
 
