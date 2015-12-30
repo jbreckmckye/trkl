@@ -1,12 +1,12 @@
 # trkl
 Reactive JavaScript programming in under 500 bytes.
 
-For just a meagre **425 bytes** (minified and gzipped), you get
+For just a meagre **449 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
 - Knockout.js-style computeds with proper "magical" dependency tracking
 - maps
-- reductions / scans
+- history tracking
 - circular reference detection
 
 It's more of a proof of concept than anything else - but quite fun to write!
