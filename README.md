@@ -9,9 +9,9 @@ For just a meagre **449 bytes** (minified and gzipped), you get
 - history tracking
 - circular reference detection
 
-It's more of a proof of concept than anything else - but quite fun to write!
+The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
 
-Project motto: "If you can find a smaller reactive programming microlibrary... keep it to yourself"
+My motto is: "If you can find a smaller reactive programming microlibrary... keep it to yourself"
 
 ## API
 
