@@ -4,7 +4,7 @@ Reactive JavaScript programming in under 500 bytes.
 For just a meagre **431 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
-- Knockout.js-style computeds with proper "magical" dependency tracking
+- powerful Knockout.js-style computeds with proper "magical" dependency tracking
 - history tracking
 - circular reference detection
 
