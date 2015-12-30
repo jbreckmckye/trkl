@@ -22,7 +22,7 @@ describe('trkl observables', ()=> {
 		const listener = jasmine.createSpy('listener');
 		const observable = trkl(oldValue);
 		
-		observable.subscribe(listener);		
+		observable.subscribe(listener);
 		observable(newValue);
 
 		expect(listener).toHaveBeenCalledWith(newValue, oldValue);
@@ -122,17 +122,53 @@ describe('A map', ()=> {
 	});
 });
 
-describe('A scan', ()=> {
+describe('Observable history', ()=> {
+	let numbers, values;
 
-	it('Performs a reduction against changes to an observable', ()=> {
-		const numbers = trkl();
-		const sum = numbers.scan((tally, newValue) => {
-			return tally + newValue;
-		}, 0);
-
-		numbers(1); numbers(2); numbers(3);
-
-		expect(sum()).toEqual(6);
+	beforeEach(()=> {
+		numbers = trkl(1);
+		values = numbers.history();
 	});
 
+	it('Creates an array', ()=> {
+		expect(values()).toEqual(jasmine.any(Array));
+	});
+
+	it('Starts the array with the current value', ()=> {
+		expect(values()).toEqual([1]);
+	});
+
+	it('Collects mutations to the observable', ()=> {
+		numbers(2); numbers(3);
+
+		expect(values()).toEqual([1, 2, 3]);
+	});
+
+	it('Does not capture non-changing writes', ()=> {
+		numbers(2);
+		numbers(2);
+		numbers(2);
+
+		expect(values()).toEqual([1, 2]);
+	});
+
+	it('Can be limited', ()=> {
+		const lastThreeValues = numbers.history(3);
+		numbers(1); numbers(2); numbers(3); numbers(4);
+
+		expect(lastThreeValues()).toEqual([2,3,4]);
+	});
+
+	it('Can be subscribed to', done => {
+		values.subscribe(done);
+		numbers(2);
+	});
+
+	it('Subscriptions are passed full history', done => {
+		values.subscribe(history => {
+			expect(history).toEqual([1, 2]);
+			done();
+		});
+		numbers(2);
+	});
 });

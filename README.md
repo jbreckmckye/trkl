@@ -58,18 +58,62 @@ Creates a new observable that transforms the original and all of its updates.
     trkl(2);
     doubles(); // equals 4
 
-### observable.scan(fn, accumulator)
+### observable.history(limit)
 
-Like `array.reduce`, but for a series of updates against an observable.
+Records the change history of an observable, as an observable, from the point you create it.
 
-    let numbers = trkl();
-    let sumChanges = numbers.scan((runningTotal, update) => {runningTotal + update}, 0);
+    let numbers = trkl(1);
+    let numHistory = numbers.history(); // starts as [1]
+        
+    numbers(2); // numHistory() = [1, 2]
+    numbers(3); // numHistory() = [1, 2, 3]
+    
+You can provide a maximum history length as an integer.
 
-    numbers(1);     // sumChanges = 1
-    numbers(10);    // sumChanges = 11
-    numbers(100);   // sumChanges = 111
+    let lastTwoNumbers = numbers.history(2);
+    
+    numbers(2); // lastTwoNumbers() = [1, 2]
+    numbers(3); // lastTwoNumbers() = [2, 3]
+    
+Because the history is itself an observable, you can subscribe to it. Every time the original observable mutates, your subscription receives the contents of the history observable:
+    
+    numHistory.subscribe(history => {
+        console.log('Numbers history is', JSON.stringify(history);
+    });
+    
+    numbers(2);
+    // Console out => "Numbers history is [1, 2]"
+    
+Bear in mind that history only captures changes. Pushing a value to an observable multiple times doesn't create multiple history entries:
 
-Scan responds to updates only - not the initial value of the observable when the scan was attached.
+    numbers(2); // numHistory() = [1, 2]
+    numbers(2); // numHistory() = [1, 2] - not [1, 2, 2]
+
+
+There is not (currently) any way to detach a history observable, so if you capture the history of something that mutates a lot, you might start to leak memory. You can mitigate this by either setting a length limit or filtering changes with an observable and attaching your history watcher to that instead:
+
+    let roomTemperature = trkl(68.45);
+    
+    // Let's say we're capturing the current room temp in degrees Fahrenheit. This is going to change a lot...
+    
+    roomTemperature(68.46);
+    roomTemperature(68.47);
+    
+    // Rather than capturing the whole, granular history, let's just capture the changes in whole degrees...
+    
+    let wholeRoomTemp = trkl.computed(()=> {
+        return Math.floor(roomTemperature());
+    });
+    
+    let wholeRoomTempHistory = wholeRoomTemp.history(99); // persist only the last 99 entries
+    // history equals [68];
+    
+    roomTemperature(68.471);
+    // history still equals [68];
+    
+    roomTemperature(69.001);
+    // history now equals [68, 69]
+    
 
 ### trkl.computed(fn)
 
