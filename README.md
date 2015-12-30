@@ -1,17 +1,17 @@
 # trkl
 Reactive JavaScript programming in under 500 bytes.
 
-For just a meagre **425 bytes** (minified and gzipped), you get
+For just a meagre **449 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
 - Knockout.js-style computeds with proper "magical" dependency tracking
 - maps
-- reductions / scans
+- history tracking
 - circular reference detection
 
-It's more of a proof of concept than anything else - but quite fun to write!
+The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
 
-Project motto: "If you can find a smaller reactive programming microlibrary... keep it to yourself"
+My motto is: "If you can find a smaller reactive programming microlibrary... keep it to yourself"
 
 ## API
 
@@ -125,3 +125,81 @@ Bear in mind that history only captures changes. Pushing a value to an observabl
 
     numbers(2); // numHistory() = [1, 2]
     numbers(2); // numHistory() = [1, 2] - not [1, 2, 2]
+<<<<<<< HEAD
+=======
+
+
+There is not (currently) any way to detach a history observable, so if you capture the history of something that mutates a lot, you might start to leak memory. You can mitigate this by either setting a length limit or filtering changes with an observable and attaching your history watcher to that instead:
+
+    let roomTemperature = trkl(68.45);
+    
+    // Let's say we're capturing the current room temp in degrees Fahrenheit. This is going to change a lot...
+    
+    roomTemperature(68.46);
+    roomTemperature(68.47);
+    
+    // Rather than capturing the whole, granular history, let's just capture the changes in whole degrees...
+    
+    let wholeRoomTemp = trkl.computed(()=> {
+        return Math.floor(roomTemperature());
+    });
+    
+    let wholeRoomTempHistory = wholeRoomTemp.history(99); // persist only the last 99 entries
+    // history equals [68];
+    
+    roomTemperature(68.471);
+    // history still equals [68];
+    
+    roomTemperature(69.001);
+    // history now equals [68, 69]
+    
+
+### trkl.computed(fn)
+
+Creates an observable that executes a function which calls other observables, and re-runs that function whenever those dependencies change.
+
+If you've used Knockout computeds, you'll know exactly how these work. Here's an example:
+
+    let a = trkl(1);
+    let b = trkl(2);
+
+    let c = trkl.computed(()=> {
+        return a() + b();
+    });
+
+    c(); // equals 1 + 2 = 3
+
+    a(3);
+    c(); // equals 3 + 2 = 5
+
+You don't have to provide anything to computed to notify if it of your dependencies. This differs from other libraries, where you have to remember to explicitly pass in all the observables your computation depends on (I'm looking at you, Flyd).
+
+Dependencies can even be dynamic!
+
+    let firstChoice = trkl('ice cream');
+    let secondChoice = trkl('pecan pie');
+
+    let preference = trkl.computed(()=> {
+        if (firstChoice() !== '') {
+            return 'I want ' + firstChoice();
+        } else {
+            return 'I want ' + secondChoice();
+        }
+    });
+
+    preference(); // 'I want ice cream'
+
+    firstChoice('');
+
+    preference(); // 'I want pecan pie'
+
+In this instance, the computed 'preference' starts with only a subscription to 'firstChoice'. When - and only when - firstChoice is blanked out, 'preference' gets a subscription to 'secondChoice', too. This is a really powerful feature in Knockout and it's quite cool to know we can make it happen with a microlibrary.
+
+###What about circular references?
+
+If we have an observable *a* that informs an computed *b*, and then we have a new computed *c* that takes the value of *b* and inserts it into *a*, we get a triangular flow of information.
+
+Luckily, trkl will detect such instances and immediately throw an exception:
+
+    Circular reference detected
+>>>>>>> origin/master
