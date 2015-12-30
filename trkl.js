@@ -38,13 +38,19 @@
 			});
 		};
 
-		self.scan = function (reducer, accumulator) {
-			var reduction = trkl(accumulator);
+		self.history = function (limit) {
+			var changes = trkl([value]);
+
 			subscribe(function (newValue) {
-				var accumulation = reducer(reduction(), newValue);
-				reduction(accumulation);
+				var changesRaw = copy(changes());
+				changesRaw.push(newValue);
+				if (limit) {
+					changesRaw = changesRaw.slice(-limit)
+				}
+				changes(changesRaw);
 			});
-			return reduction;
+
+			return changes;
 		};
 
 		function write (newValue) {
@@ -109,6 +115,10 @@
 		if (position !== -1) {
 			array.splice(position, 1);
 		}	
+	}
+
+	function copy(array) {
+		return array.slice(0);
 	}
 
 	return trkl;
