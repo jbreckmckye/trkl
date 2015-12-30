@@ -95,19 +95,6 @@ Passing a subscriber multiple times does not cause it to fire multiple times on 
 
 Remove the specified function as a subscriber.
 
-### observable.map(fn)
-
-Creates a new observable that transforms the original and all of its updates.
-
-    let numbers = trkl(1);
-    let doubles = numbers.map(x => {
-        return x*2;
-    });
-
-    doubles(); // equals 2
-    trkl(2);
-    doubles(); // equals 4
-
 ### observable.history(limit)
 
 Records the change history of an observable, as an observable, from the point you create it.

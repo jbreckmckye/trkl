@@ -32,12 +32,6 @@
 			remove(subscribers, subscriber);
 		};
 
-		self.map = function (transform) {
-			return trkl.computed(function() {
-				return transform(self());
-			});
-		};
-
 		self.history = function (limit) {
 			var changes = trkl([value]);
 
