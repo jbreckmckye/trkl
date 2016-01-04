@@ -32,17 +32,19 @@ Creates an observable that executes a function which calls other observables, an
 
 If you've used Knockout computeds, you'll know exactly how these work. Here's an example:
 
-    let a = trkl(1);
-    let b = trkl(2);
+    let a = trkl(0);
+    let b = trkl(0);
 
     let c = trkl.computed(()=> {
         return a() + b();
     });
+    
+    c.subscribe(newVal => {
+        console.log("c's value is now ", newVal);
+    });
 
-    c(); // equals 1 + 2 = 3
-
-    a(3);
-    c(); // equals 3 + 2 = 5
+    a(5); // Console => "c's value is now 5"
+    b(3); // Console => "c's value is now 8"
 
 You don't have to provide anything to computed to notify if it of your dependencies. This differs from other libraries, where you have to remember to explicitly pass in all the observables your computation depends on (I'm looking at you, Flyd).
 
