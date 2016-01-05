@@ -8,7 +8,7 @@ For just a meagre **431 bytes** (minified and gzipped), you get
 - history tracking
 - circular reference detection
 
-The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
+This is more of a proof of concept than anything else - to see how much we can do with the least scripting. The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
 
 My motto is: "If you can find a smaller reactive programming microlibrary... keep it to yourself"
 
@@ -106,7 +106,7 @@ Records the change history of an observable, as an observable, from the point yo
     numbers(2); // numHistory() = [1, 2]
     numbers(3); // numHistory() = [1, 2, 3]
     
-You can provide a maximum history length as an integer.
+You can provide a maximum history length as an integer. This will prevent memory leakage.
 
     let lastTwoNumbers = numbers.history(2);
     
