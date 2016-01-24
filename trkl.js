@@ -33,14 +33,13 @@
 		};
 
 		self.history = function (limit) {
+			limit = limit || 10;
 			var changes = trkl([value]);
 
 			subscribe(function (newValue) {
 				var changesRaw = copy(changes());
 				changesRaw.push(newValue);
-				if (limit) {
-					changesRaw = changesRaw.slice(-limit)
-				}
+				changesRaw = changesRaw.slice(-limit);
 				changes(changesRaw);
 			});
 
