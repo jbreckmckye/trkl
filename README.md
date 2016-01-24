@@ -106,7 +106,7 @@ Records the change history of an observable, as an observable, from the point yo
     numbers(2); // numHistory() = [1, 2]
     numbers(3); // numHistory() = [1, 2, 3]
     
-You can provide a maximum history length as an integer. This will prevent memory leakage.
+The maximum history length is provided as an integer. If undefined, it defaults to ten items.
 
     let lastTwoNumbers = numbers.history(2);
     
