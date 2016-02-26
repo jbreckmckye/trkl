@@ -49,11 +49,9 @@
 		function write (newValue) {
 			var oldValue = value;		
 			value = newValue;
-			if (oldValue !== newValue) {
-				subscribers.forEach(function (subscriber) {
-					subscriber(value, oldValue);
-				});
-			}
+			subscribers.forEach(function (subscriber) {
+				subscriber(value, oldValue);
+			});
 		}
 
 		function read () {

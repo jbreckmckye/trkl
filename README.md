@@ -122,8 +122,8 @@ Because the history is itself an observable, you can subscribe to it. Every time
     numbers(2);
     // Console out => "Numbers history is [1, 2]"
     
-Bear in mind that history only captures changes. Pushing a value to an observable multiple times doesn't create multiple history entries:
+Bear in mind that pushing a value to an observable multiple times will create multiple history entries:
 
     numbers(2); // numHistory() = [1, 2]
-    numbers(2); // numHistory() = [1, 2] - not [1, 2, 2]
+    numbers(2); // numHistory() = [1, 2, 2] - not [1, 2]
     
