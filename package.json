@@ -1,0 +1,26 @@
+{
+  "name": "trkl",
+  "version": "1.1.0",
+  "description": "Reactive microlibrary offering Knockout-style observables and computeds for less than 500 bytes",
+  "main": "trkl-min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jbreckmckye/trkl.git"
+  },
+  "keywords": [
+    "Knockout",
+    "reactive",
+    "microlibrary"
+  ],
+  "author": "Jimmy Breck-McKye",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jbreckmckye/trkl/issues"
+  },
+  "homepage": "https://github.com/jbreckmckye/trkl#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
