@@ -11,6 +11,14 @@ This is more of a proof of concept than anything else - to see how much we can d
 
 My motto is: "If you can find a smaller reactive programming microlibrary... keep it to yourself"
 
+## Installation
+
+You can either drop `trkl.min.js` straight into your project, or run
+
+    npm install trkl --save
+
+Trkl works in both CommonJS and AMD environments, but it can also create a simple `window.trkl` object otherwise.
+
 ## API
 
 ### trkl()
