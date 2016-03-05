@@ -1,11 +1,10 @@
 # trkl
-Reactive JavaScript programming in under 500 bytes.
+Reactive JavaScript programming in 400 bytes.
 
-For just a meagre **464 bytes** (minified and gzipped), you get
+For just a meagre **401 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
 - powerful Knockout.js-style computeds with proper "magical" dependency tracking
-- history tracking
 - circular reference detection
 
 This is more of a proof of concept than anything else - to see how much we can do with the least scripting. The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
@@ -46,7 +45,7 @@ If you've used Knockout computeds, you'll know exactly how these work. Here's an
     a(5); // Console => "c's value is now 5"
     b(3); // Console => "c's value is now 8"
 
-You don't have to provide anything to computed to notify if it of your dependencies. This differs from other libraries, where you have to remember to explicitly pass in all the observables your computation depends on (I'm looking at you, Flyd).
+You don't have to provide anything to computed to notify if it of your dependencies. This differs from other libraries, where you have to remember to explicitly pass in all the observables your computation depends on.
 
 Dependencies can even be dynamic!
 
@@ -95,35 +94,3 @@ Passing a subscriber multiple times does not cause it to fire multiple times on 
 ### observable.unsubscribe(fn)
 
 Remove the specified function as a subscriber.
-
-### observable.history(limit)
-
-Records the change history of an observable, as an observable, from the point you create it.
-
-    let numbers = trkl(1);
-    let numHistory = numbers.history(); // starts as [1]
-        
-    numbers(2); // numHistory() = [1, 2]
-    numbers(3); // numHistory() = [1, 2, 3]
-    
-The maximum history length is provided as an integer. If undefined, it defaults to ten items.
-
-    let lastTwoNumbers = numbers.history(2);
-    
-    numbers(2); // lastTwoNumbers() = [1, 2]
-    numbers(3); // lastTwoNumbers() = [2, 3]
-    
-Because the history is itself an observable, you can subscribe to it. Every time the original observable mutates, your subscription receives the contents of the history observable:
-    
-    numHistory.subscribe(history => {
-        console.log('Numbers history is', JSON.stringify(history);
-    });
-    
-    numbers(2);
-    // Console out => "Numbers history is [1, 2]"
-    
-Bear in mind that pushing a value to an observable multiple times will create multiple history entries:
-
-    numbers(2); // numHistory() = [1, 2]
-    numbers(2); // numHistory() = [1, 2, 2] - not [1, 2]
-    

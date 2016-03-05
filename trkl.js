@@ -39,20 +39,6 @@
 			remove(subscribers, subscriber);
 		};
 
-		self.history = function (limit) {
-			limit = limit || 10;
-			var changes = trkl([value]);
-
-			subscribe(function (newValue) {
-				var changesRaw = copy(changes());
-				changesRaw.push(newValue);
-				changesRaw = changesRaw.slice(-limit);
-				changes(changesRaw);
-			});
-
-			return changes;
-		};
-
 		function write (newValue) {
 			var oldValue = value;		
 			value = newValue;
@@ -113,10 +99,6 @@
 		if (position !== -1) {
 			array.splice(position, 1);
 		}	
-	}
-
-	function copy(array) {
-		return array.slice(0);
 	}
 
 	return trkl;
