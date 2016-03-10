@@ -11,6 +11,27 @@ This is more of a proof of concept than anything else - to see how much we can d
 
 My motto is: "If you can find a smaller reactive programming microlibrary... keep it to yourself"
 
+## Give me the gist
+
+```javascript
+const model = {
+    firstName : trkl('Zaphod'),
+    lastName : trkl('Beeblebrox')
+};
+
+const fullName = trkl.computed(()=> {
+    return model.firstName() + ' ' + model.lastName();
+});
+
+fullName.subscribe((newName, oldName) => {
+    const msg = ['Name was changed from', oldName, 'to', newName];
+    console.log(msg.join(' '));
+});
+
+firstName('Trillian');
+// Console logs -> "Name was changed from Zaphod Beeblebrox to Trillian Beeblebrox"
+```
+
 ## Installation
 
 You can either drop `trkl.min.js` straight into your project, or run
