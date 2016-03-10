@@ -7,7 +7,7 @@ For just a meagre **401 bytes** (minified and gzipped), you get
 - powerful Knockout.js-style computeds with proper "magical" dependency tracking
 - circular reference detection
 
-This is more of a proof of concept than anything else - to see how much we can do with the least scripting. The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
+The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
 
 My motto is: "If you can find a smaller reactive programming microlibrary... keep it to yourself"
 
