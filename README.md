@@ -78,22 +78,28 @@ You don't have to provide anything to computed to notify if it of your dependenc
 
 Dependencies can even be dynamic!
 
-    let firstChoice = trkl('ice cream');
-    let secondChoice = trkl('pecan pie');
-
-    let preference = trkl.computed(()=> {
-        if (firstChoice() !== '') {
-            return 'I want ' + firstChoice();
+    let a = trkl(1);
+    let b = trkl(2);
+    let bool = trkl(true);
+    
+    const trkl.computed(()=> {
+        if (bool()) {
+            console.log('A is', a());
         } else {
-            return 'I want ' + secondChoice();
+            console.log('B is', b());
         }
     });
-
-    preference(); // 'I want ice cream'
-
-    firstChoice('');
-
-    preference(); // 'I want pecan pie'
+    
+    // Console log -> "A is 1"
+    a(3);
+    // Console log -> "A is 3"
+    bool(false);
+    // Console log -> "B is 2"
+    b(4);
+    // Console log -> "B is 4"
+    bool(true);
+    // Console log -> "A is 3"
+    
 
 In this instance, the computed 'preference' starts with only a subscription to 'firstChoice'. When - and only when - firstChoice is blanked out, 'preference' gets a subscription to 'secondChoice', too. This is a really powerful feature in Knockout and it's quite cool to know we can make it happen with a microlibrary.
 
