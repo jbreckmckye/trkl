@@ -14,92 +14,92 @@
 }(this, function() {
     var computedTracker = [];
 
-	function trkl(initValue) {
-		var value = initValue;
-		var subscribers = [];
+function trkl(initValue) {
+	var value = initValue;
+	var subscribers = [];
 
-		var self = function (writeValue) {
-			if (arguments.length > 0) {
-				write(writeValue);
-			} else {
-				return read();
-			}
-		};
-
-		self.subscribe = subscribe;
-
-		// declaring as a private function means the minifier can scrub its name on internal references
-		function subscribe(subscriber) {
-			if (absent(subscribers, subscriber)) {
-				subscribers.push(subscriber);
-			}
-		}
-
-		self.unsubscribe = function (subscriber) {
-			remove(subscribers, subscriber);
-		};
-
-		function write (newValue) {
-			var oldValue = value;		
-			value = newValue;
-			subscribers.forEach(function (subscriber) {
-				subscriber(value, oldValue);
-			});
-		}
-
-		function read () {
-			var runningComputation = computedTracker[computedTracker.length - 1];
-			if (runningComputation) {
-				subscribe(runningComputation.subscriber);
-			}
-			return value;
-		}
-
-		return self;
-	}
-
-	trkl.computed = function (fn) {
-		var self = trkl();
-		var computationToken = {
-			subscriber : runComputed
-		};
-
-		runComputed();
-		return self;
-
-		function runComputed() {
-			detectCircularity(computationToken);
-			computedTracker.push(computationToken);
-			var errors, result;
-			try {
-				result = fn();
-			} catch (e) {
-				errors = e;
-			}
-			computedTracker.pop();
-			if (errors) {
-				throw errors;
-			}
-			self(result);
+	var self = function (writeValue) {
+		if (arguments.length > 0) {
+			write(writeValue);
+		} else {
+			return read();
 		}
 	};
 
-	function detectCircularity(token) {
-		if (computedTracker.indexOf(token) !== -1) {
-			throw Error('Circular computation detected');
+	self.subscribe = subscribe;
+
+	// declaring as a private function means the minifier can scrub its name on internal references
+	function subscribe(subscriber) {
+		if (absent(subscribers, subscriber)) {
+			subscribers.push(subscriber);
 		}
 	}
 
-	function absent(array, item) {
-		return array.indexOf(item) === -1;
+	self.unsubscribe = function (subscriber) {
+		remove(subscribers, subscriber);
+	};
+
+	function write (newValue) {
+		var oldValue = value;		
+		value = newValue;
+		subscribers.forEach(function (subscriber) {
+			subscriber(value, oldValue);
+		});
 	}
 
-	function remove(array, item) {
-		var position = array.indexOf(item);
-		if (position !== -1) {
-			array.splice(position, 1);
-		}	
+	function read () {
+		var runningComputation = computedTracker[computedTracker.length - 1];
+		if (runningComputation) {
+			subscribe(runningComputation.subscriber);
+		}
+		return value;
 	}
 
-	return trkl;
+	return self;
+}
+
+trkl.computed = function (fn) {
+	var self = trkl();
+	var computationToken = {
+		subscriber : runComputed
+	};
+
+	runComputed();
+	return self;
+
+	function runComputed() {
+		detectCircularity(computationToken);
+		computedTracker.push(computationToken);
+		var errors, result;
+		try {
+			result = fn();
+		} catch (e) {
+			errors = e;
+		}
+		computedTracker.pop();
+		if (errors) {
+			throw errors;
+		}
+		self(result);
+	}
+};
+
+function detectCircularity(token) {
+	if (computedTracker.indexOf(token) !== -1) {
+		throw Error('Circular computation detected');
+	}
+}
+
+function absent(array, item) {
+	return array.indexOf(item) === -1;
+}
+
+function remove(array, item) {
+	var position = array.indexOf(item);
+	if (position !== -1) {
+		array.splice(position, 1);
+	}	
+}
+
+return trkl;
 }));
