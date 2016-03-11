@@ -82,7 +82,7 @@ Dependencies can even be dynamic!
     let b = trkl(2);
     let bool = trkl(true);
     
-    const trkl.computed(()=> {
+    const c = trkl.computed(()=> {
         if (bool()) {
             console.log('A is', a());
         } else {
@@ -101,7 +101,7 @@ Dependencies can even be dynamic!
     // Console log -> "A is 3"
     
 
-In this instance, the computed 'preference' starts with only a subscription to 'firstChoice'. When - and only when - firstChoice is blanked out, 'preference' gets a subscription to 'secondChoice', too. This is a really powerful feature in Knockout and it's quite cool to know we can make it happen with a microlibrary.
+The computed `c` starts with a dependency on `bool` and `a`. When `bool` changes, we re-run the function and capture a dependency on `b`.
 
 **What about circular references?**
 
