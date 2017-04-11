@@ -14,22 +14,20 @@ My motto is: "If you can find a smaller reactive programming microlibrary... kee
 ## Give me the gist
 
 ```javascript
-const model = {
-    firstName : trkl('Zaphod'),
-    lastName : trkl('Beeblebrox')
-};
+const appleCount = trkl(5);
+const bananaCount = trkl(4);
 
-const fullName = trkl.computed(()=> {
-    return model.firstName() + ' ' + model.lastName();
+appleCount.subscribe(val => console.log(val, 'apples remaining');
+
+appleCount(6); // prints, '6 apples remaining'
+
+const fruitCount = trkl.computed(()=> {
+  return appleCount() + bananaCount();
 });
 
-fullName.subscribe((newName, oldName) => {
-    const msg = ['Name was changed from', oldName, 'to', newName];
-    console.log(msg.join(' '));
-});
+fruitCount.subscribe(val => console.log(val, 'fruit remaining');
 
-firstName('Trillian');
-// Console logs -> "Name was changed from Zaphod Beeblebrox to Trillian Beeblebrox"
+bananaCount(3); // prints, '9 fruit remaining'
 ```
 
 ## Installation
