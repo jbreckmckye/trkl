@@ -15,7 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'trkl.js',
+      'trkl.js', // use trkl-min.js to test minified version
       'spec.js'
     ],
 
