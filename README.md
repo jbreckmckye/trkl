@@ -21,9 +21,7 @@ const oranges = trkl(4);
 
 oranges.subscribe(_ => console.log('We have', _, 'oranges'));
 
-oranges(5);
-
-// Console logs, "We have 5 oranges"
+oranges(5); // Console logs, "We have 5 oranges"
 
 /**
 * Computeds
@@ -36,12 +34,9 @@ trkl.computed(()=> {
     const totalFruit = apples() + banans();
     console.log('We have', totalFruit, 'fruit');
 });
-
 // Console logs, "We have 7 fruit"
 
-apples(4);
-
-// Console logs, "We have 9 fruit"
+apples(4); // Console logs, "We have 9 fruit"
 ```
 
 ## Installation
