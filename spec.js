@@ -28,6 +28,16 @@ describe('trkl observables', ()=> {
 		expect(listener).toHaveBeenCalledWith(newValue, oldValue);
 	});
 
+	it('A subscriber can be run immediately', ()=> {
+		const value = {};
+		const observable = trkl(value);
+		const listener = jasmine.createSpy('listener');
+
+		observable.subscribe(listener, true);
+
+		expect(listener).toHaveBeenCalledWith(value);
+	});
+
 	it('Can be unsubscribed from', ()=> {
 		const observable = trkl();
 		const listener = jasmine.createSpy('listener');
@@ -82,7 +92,7 @@ describe('A computed', ()=> {
 
 		relay(false);
 		expect(computation()).toBe(2);
-	})
+	});
 
 	it('Does not allow circular references', ()=> {
 		const a = trkl(1);

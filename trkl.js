@@ -29,9 +29,12 @@
         self.subscribe = subscribe;
     
         // declaring as a private function means the minifier can scrub its name on internal references
-        function subscribe(subscriber) {
+        function subscribe(subscriber, immediate) {
             if (absent(subscribers, subscriber)) {
                 subscribers.push(subscriber);
+            }
+            if (immediate) {
+                subscriber(value);
             }
         }
     
