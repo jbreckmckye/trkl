@@ -31,7 +31,7 @@ const apples = trkl(2);
 const bananas = trkl(5);
 
 trkl.computed(()=> {
-    const totalFruit = apples() + banans();
+    const totalFruit = apples() + bananas();
     console.log('We have', totalFruit, 'fruit');
 });
 // Console logs, "We have 7 fruit"
