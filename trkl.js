@@ -9,7 +9,7 @@
         module.exports = factory();
     } else {
         // Browser globals (root is window)
-        root.trkl = factory();
+        root['trkl'] = factory();
     }
 }(this, function() {
     var computedTracker = [];
@@ -25,8 +25,9 @@
                 return read();
             }
         };
-    
-        self.subscribe = subscribe;
+
+        // Using string keys tells the Google Closure compiler that we intend to export these symbols
+        self['subscribe'] = subscribe;
     
         // declaring as a private function means the minifier can scrub its name on internal references
         function subscribe(subscriber, immediate) {
@@ -38,7 +39,7 @@
             }
         }
     
-        self.unsubscribe = function (subscriber) {
+        self['unsubscribe'] = function (subscriber) {
             remove(subscribers, subscriber);
         };
     
@@ -61,7 +62,7 @@
         return self;
     }
 
-    trkl.computed = function (fn) {
+    trkl['computed'] = function (fn) {
         var self = trkl();
         var computationToken = {
             subscriber : runComputed
