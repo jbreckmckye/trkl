@@ -14,20 +14,34 @@ My motto is: "If you can find a smaller reactive programming microlibrary... kee
 ## Give me the gist
 
 ```javascript
-const appleCount = trkl(5);
-const bananaCount = trkl(4);
+/**
+* Pub-sub
+*/
+const oranges = trkl(4);
 
-appleCount.subscribe(val => console.log(val, 'apples remaining');
+oranges.subscribe(_ => console.log('We have', _, 'oranges'));
 
-appleCount(6); // prints, '6 apples remaining'
+oranges(5);
 
-const fruitCount = trkl.computed(()=> {
-  return appleCount() + bananaCount();
+// Console logs, "We have 5 oranges"
+
+/**
+* Computeds
+*/
+
+const apples = trkl(2);
+const bananas = trkl(5);
+
+trkl.computed(()=> {
+    const totalFruit = apples() + banans();
+    console.log('We have', totalFruit, 'fruit');
 });
 
-fruitCount.subscribe(val => console.log(val, 'fruit remaining');
+// Console logs, "We have 7 fruit"
 
-bananaCount(3); // prints, '9 fruit remaining'
+apples(4);
+
+// Console logs, "We have 9 fruit"
 ```
 
 ## Installation
