@@ -119,7 +119,7 @@ Luckily, trkl will detect such instances and immediately throw an exception:
     Circular reference detected
 
 
-### observable.subscribe(fn)
+### observable.subscribe(fn, ?immediate)
 
 When an observable is updated, pass its new and old values to the supplied subscriber.
 
@@ -131,7 +131,9 @@ When an observable is updated, pass its new and old values to the supplied subsc
     numbers(2);
     // console outputs 'The observable was changed from 1 to 2'
 
-Passing a subscriber multiple times does not cause it to fire multiple times on update.
+If you pass the same subscriber multiple times, it will be de-duplicated, and only run once. 
+
+If you pass a truthy value to `immediate`, the subscriber will also run immediately.
 
 ### observable.unsubscribe(fn)
 
