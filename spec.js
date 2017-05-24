@@ -108,3 +108,17 @@ describe('A computed', ()=> {
 		expect(attachCircular).toThrow(Error('Circular computation detected'));
 	});
 });
+
+describe('trkl.from', ()=> {
+
+	it('creates an observable', ()=> {
+		const result = trkl.from(()=> {});
+		expect(typeof result).toBe('function');
+	});
+
+	it('passes the observable to the executor', ()=> {
+		const executor = jasmine.createSpy('executor');
+		const observable = trkl.from(executor);
+		expect(executor).toHaveBeenCalledWith(observable);
+	});
+});

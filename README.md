@@ -1,7 +1,7 @@
 # trkl
-Reactive JavaScript programming in 400 bytes.
+Reactive JavaScript programming in less than half a kilobyte.
 
-For just a meagre **405 bytes** (minified and gzipped), you get
+For just a meagre **419 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
 - powerful Knockout.js-style computeds with proper "magical" dependency tracking
@@ -13,7 +13,7 @@ My motto is: "If you can find a smaller reactive programming microlibrary... kee
 
 ## Give me the gist
 
-```javascript 1.6
+```javascript
 /**
 * Pub-sub
 */
@@ -54,7 +54,7 @@ Trkl works in both CommonJS and AMD environments, but it can also create a simpl
 ### trkl()
 Creates an observable with optional supplied initial value.
 
-```javascript 1.6
+```javascript
 let observable = trkl('foo');
 ```    
 
@@ -62,7 +62,7 @@ let observable = trkl('foo');
 
 Call without arguments to get the value, call with an argument to set it.
 
-```javascript 1.6
+```javascript
 observable();       // getter
 observable('foo');  // setter
 ```
@@ -73,7 +73,7 @@ Creates an observable that executes a function which calls other observables, an
 
 If you've used Knockout computeds, you'll know exactly how these work. Here's an example:
 
-```javascript 1.6
+```javascript
 let a = trkl(0);
 let b = trkl(0);
 
@@ -93,7 +93,7 @@ You don't have to provide anything to computed to notify if it of your dependenc
 
 Dependencies can even be dynamic!
 
-```javascript 1.6
+```javascript
 let a = trkl(1);
 let b = trkl(2);
 let bool = trkl(true);
@@ -129,11 +129,31 @@ Luckily, trkl will detect such instances and immediately throw an exception:
 Circular reference detected
 ```
 
+### trkl.from(observable => {...})
+
+Create an observable, and pass it to your supplied function. That function may then set up event handlers to change the observable's state.
+
+For instance, to create an observable that tracks the x/y coordinates of user clicks:
+
+```javascript
+const clicks = trkl.from(observable => {
+    window.addEventListener('click', e => {
+        const coordinates = {x: e.clientX, y: e.clientY};
+        observable(coordinates);
+    });
+});
+
+clicks.subscribe(coordinates => console.log(coordinates));
+```
+
+Every time the user clicks, clicks is updated with the latest coordinates.
+
+
 ### observable.subscribe(fn, ?immediate)
 
 When an observable is updated, pass its new and old values to the supplied subscriber.
 
-```javascript 1.6
+```javascript
 let numbers = trkl(1);
 numbers.subscribe((newVal, oldVal) => {
     console.log('The observable was changed from', oldVal, 'to', newVal);
