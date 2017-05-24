@@ -19,7 +19,7 @@
         var subscribers = [];
     
         var self = function (writeValue) {
-            if (arguments.length > 0) {
+            if (arguments.length) {
                 write(writeValue);
             } else {
                 return read();
@@ -86,6 +86,12 @@
             }
             self(result);
         }
+    };
+
+    trkl['from'] = function (executor) {
+        var self = trkl();
+        executor(self);
+        return self;
     };
     
     function detectCircularity(token) {
