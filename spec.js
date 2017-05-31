@@ -30,12 +30,13 @@ describe('trkl observables', ()=> {
 
 	it('A subscriber can be run immediately', ()=> {
 		const value = {};
+		const lastVal = undefined;
 		const observable = trkl(value);
 		const listener = jasmine.createSpy('listener');
 
 		observable.subscribe(listener, true);
 
-		expect(listener).toHaveBeenCalledWith(value);
+		expect(listener).toHaveBeenCalledWith(value, lastVal);
 	});
 
 	it('Can be unsubscribed from', ()=> {
@@ -95,17 +96,37 @@ describe('A computed', ()=> {
 	});
 
 	it('Does not allow circular references', ()=> {
-		const a = trkl(1);
-		const b = trkl.computed(()=> {
-			return a() + 1;
+		const root = trkl(1);
+
+		const left = trkl.computed(()=> {
+			if (root() < 2) {
+				return root() * 2;
+			} else {
+				return right() * 2;
+			}
 		});
-		const attachCircular = ()=> {
-			trkl.computed(()=> {
-				a(b() + 1);
-			})
+
+		const right = trkl.computed(()=> {
+			return left() + 5;
+		});
+
+		const makeCircular = ()=> {
+            root(3); // should trigger circularity
 		};
 
-		expect(attachCircular).toThrow(Error('Circular computation detected'));
+		expect(makeCircular).toThrow();
+	});
+
+	it('Does not allow circular writes', ()=> {
+		const root = trkl(1);
+
+		const makeCircular = ()=> {
+            trkl.computed(()=> {
+                root( root() + 1);
+            });
+		};
+
+		expect(makeCircular).toThrow();
 	});
 });
 

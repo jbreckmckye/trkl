@@ -4,7 +4,8 @@
   "description": "Reactive microlibrary offering Knockout-style observables and computeds for less than 500 bytes",
   "main": "trkl-min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "karma start",
+    "minify": "uglifyjs --config-file uglify.json -o trkl-min.js"
   },
   "repository": {
     "type": "git",
@@ -22,10 +23,11 @@
   },
   "homepage": "https://github.com/jbreckmckye/trkl#readme",
   "devDependencies": {
-    "jasmine-core": "^2.6.2",
-    "karma": "^1.7.0",
-    "karma-chrome-launcher": "^2.1.1",
-    "karma-jasmine": "^1.1.0"
-  },
-  "dependencies": {}
+    "jasmine-core": "2.6.2",
+    "karma": "1.7.0",
+    "karma-chrome-launcher": "2.1.1",
+    "karma-jasmine": "1.1.0",
+    "uglify-es": "^3.0.14",
+    "uglify-js": "3.0.14"
+  }
 }
