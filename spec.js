@@ -141,6 +141,12 @@ describe('A computed', ()=> {
 
 		expect(makeCircular).toThrow();
 	});
+
+	it('Is not writable', ()=> {
+		const computed = trkl.computed(()=> 5);
+		computed(7);
+		expect(computed()).toBe(5);
+	});
 });
 
 describe('Computed de-duplication', ()=> {
