@@ -12,16 +12,16 @@
         root["trkl"] = factory();
     }
 }(this, function() {
-    let runningComputed = null;
-    let staledItems = [];
+    var runningComputed = null;
+    var staledItems = [];
 
     /**
      * Publics
      */
 
-    let trkl = function(init) {
-        let observable = new DataNode(init);
-        let self = function() {
+    var trkl = function(init) {
+        var observable = new DataNode(init);
+        var self = function() {
             return arguments.length ? observable.write(arguments[0]) : observable.read();
         };
         self.subscribe = observable.sub.bind(observable);
@@ -30,15 +30,15 @@
     };
 
     trkl['computed'] = function(executor) {
-        let observable = new DataNode(0, executor);
-        let self = observable.read.bind(observable);
+        var observable = new DataNode(0, executor);
+        var self = observable.read.bind(observable);
         self.subscribe = observable.sub.bind(observable);
         self.unsubscribe = observable.unsub.bind(observable);
         return self;
     };
 
     trkl['from'] = function(executor) {
-        let observable = trkl();
+        var observable = trkl();
         executor(observable);
         return observable;
     };
@@ -63,8 +63,40 @@
     }
 
     // By overwriting the prototype with a local var, we can cut down the minified size
-    let DataNode_prototype = {};
+    var DataNode_prototype = {};
     DataNode.prototype = DataNode_prototype;
+
+    /**
+     * Side effects (subscriptions)
+     */
+
+    DataNode_prototype.sub = function(func, immediate) {
+        if (this._subscribers.indexOf(func) == -1) this._subscribers.push(func);
+        if (immediate) func(this._value, this._lastVal);
+    };
+
+    DataNode_prototype.unsub = function(func) {
+        var pos = this._subscribers.indexOf(func);
+        if (pos > -1) this._subscribers.splice(pos, 1);
+    };
+
+    DataNode_prototype._runSubscribers = function() {
+        if (!this._subscribers.length) return;
+
+        for (var i = 0; i < this._subscribers.length; i++) {
+            this._runSubscriber(this._subscribers[i]);
+        }
+    };
+
+    DataNode_prototype._runSubscriber = function(func) {
+        var error;
+        try {
+            func(this._value, this._lastVal);
+        } catch (e) {
+            error = e;
+        }
+        if (error) window.setTimeout(function() {throw error}, 0);
+    };
 
     /**
      * Reading data
@@ -124,7 +156,7 @@
 
         this._rollbackVal = this._value;
 
-        let error;
+        var error;
         try {
             this._value = this._computed();
         } catch (e) {
@@ -144,7 +176,7 @@
      */
 
     DataNode_prototype._broadcastStale = function() {
-        for (let i = 0; i < this._children.length; i++) {
+        for (var i = 0; i < this._children.length; i++) {
             this._children[i].setStale();
         }
     };
@@ -154,7 +186,9 @@
         if (this._staleness == 1) {
             // just became stale
             // It's very important that we only broadcast our staleness to the world once
-            this._children.forEach(child => child.setStale());
+            for (var i = 0; i < this._children.length; i++) {
+                this._children[i].setStale();
+            }
             this._registerStaled();
         }
     };
@@ -171,7 +205,7 @@
     };
 
     DataNode_prototype._broadcastReady = function() {
-        for (let i = 0; i < this._children.length; i++) {
+        for (var i = 0; i < this._children.length; i++) {
             this._children[i].setReady();
         }
     };
@@ -202,8 +236,8 @@
      */
 
     DataNode.validate = function() {
-        let unreconciled;
-        for (let i = 0; i < staledItems.length; i++) {
+        var unreconciled;
+        for (var i = 0; i < staledItems.length; i++) {
             if (staledItems[i] !== null) {
                 unreconciled = staledItems[i];
                 break;
@@ -224,39 +258,9 @@
     DataNode_prototype.onError = function() {
         this._value = this._rollbackVal;
         this._staleness = 0;
-        this._children && this._children.forEach(child => child.onError());
-    };
-
-    /**
-     * Side effects (subscriptions)
-     */
-
-    DataNode_prototype.sub = function(func, immediate) {
-        if (this._subscribers.indexOf(func) == -1) this._subscribers.push(func);
-        if (immediate) func(this._value, this._lastVal);
-    };
-
-    DataNode_prototype.unsub = function(func) {
-        let pos = this._subscribers.indexOf(func);
-        if (pos > -1) this._subscribers.splice(pos, 1);
-    };
-
-    DataNode_prototype._runSubscribers = function() {
-        if (!this._subscribers.length) return;
-
-        for (let i = 0; i < this._subscribers.length; i++) {
-            this._runSubscriber(this._subscribers[i]);
+        for (var i = 0; i < this._children.length; i++) {
+            this._children[i].onError();
         }
-    };
-
-    DataNode_prototype._runSubscriber = function(func) {
-        let error;
-        try {
-            func(this._value, this._lastVal);
-        } catch (e) {
-            error = e;
-        }
-        if (error) window.setTimeout(()=> {throw error;}, 0);
     };
 
     /**
