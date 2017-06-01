@@ -5,7 +5,7 @@
   "main": "trkl-min.js",
   "scripts": {
     "test": "karma start",
-    "minify": "uglifyjs --config-file uglify.json -o trkl-min.js"
+    "minify": "node minify.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jbreckmckye/trkl#readme",
   "devDependencies": {
+    "gzip-size": "3.0.0",
     "jasmine-core": "2.6.2",
     "karma": "1.7.0",
     "karma-chrome-launcher": "2.1.1",
