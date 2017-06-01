@@ -7,11 +7,11 @@ const source = fs.readFileSync('trkl.js', 'utf8');
 const options = {
     warnings: true,
     compress: {
-        passes: 2
+        passes: 5
     },
     mangle: {
         properties: {
-            regex: /^_/
+            regex: /^_|read|write|setStale|setReady|validate|foundCircular|onError/
         }
     },
     toplevel: false,
