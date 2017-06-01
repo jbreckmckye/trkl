@@ -1,8 +1,8 @@
 (function (root, factory) {
-    if (define && define.amd) {
+    if (typeof define == 'function' && define.amd) {
         // AMD. Register as an anonymous module
         define([], factory);
-    } else if (module && module.exports) {
+    } else if (typeof module == 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node
@@ -14,6 +14,10 @@
 }(this, function() {
     let runningComputed = null;
     let staledItems = [];
+
+    /**
+     * Publics
+     */
 
     let trkl = function(init) {
         let observable = new DataNode(init);
@@ -40,32 +44,27 @@
     };
 
     function DataNode(val, computed) {
-        this._computed = computed;
-        computed && this._runComputed();
-
-        this._value = computed ? this._value : val;
-        //this._rollbackVal;
-        this._lastVal = this._value;
         this._staleness = 0;
         this._staledItemsPosition = -1;
 
         this._children = [];
         this._subscribers = [];
+
+        this._computed = computed;
+        computed && this._runComputed();
+
+        this._value = computed ? this._value : val;
+        // this._lastVal;
+        // this._rollbackVal;
     }
 
     // By overwriting the prototype with a local var, we can cut down the minified size
     let DataNode_prototype = {};
     DataNode.prototype = DataNode_prototype;
 
-    DataNode_prototype.sub = function(func, immediate) {
-        if (this._subscribers.indexOf(func) == -1) this._subscribers.push(func);
-        if (immediate) func(this._value, this.lastVal);
-    };
-
-    DataNode_prototype.unsub = function(func) {
-        let pos = this._subscribers.indexOf(func);
-        if (pos > -1) this._subscribers.splice(pos, 1);
-    };
+    /**
+     * Reading data
+     */
 
     DataNode_prototype.read = function() {
         if (runningComputed && this._children.indexOf(runningComputed) == -1) {
@@ -77,49 +76,9 @@
         return this._value;
     };
 
-    DataNode_prototype._runComputed = function() {
-        runningComputed = this;
-
-        this._rollbackVal = this._value;
-
-        let error;
-        try {
-            this._value = this._computed();
-        } catch (e) {
-            error = e;
-        }
-
-        runningComputed = null;
-
-        if (error) {
-            this.onError();
-            throw error;
-        } else {
-            this._lastVal = this._rollbackVal;
-        }
-    };
-
-    DataNode_prototype.onError = function() {
-        this._value = this._rollbackVal;
-        this._staleness = 0;
-        this._children && this._children.forEach(child => child.onError());
-    };
-
-    DataNode.validate = function() {
-        let unreconciled;
-        for (let i = 0; i < staledItems.length; i++) {
-            if (staledItems[i] !== null) {
-                unreconciled = staledItems[i];
-                break;
-            }
-        }
-        staledItems.length = 0;
-        if (unreconciled) DataNode.foundCircular(unreconciled);
-    };
-
-    DataNode.foundCircular = function(unreconciled) {
-        throw new Error('Circular dependency detected. Trkl has stopped. Suspicious function is: ' + unreconciled._computed.toString());
-    };
+    /**
+     * Writing data
+     */
 
     DataNode_prototype.write = function(next) {
         // This is what will dispatch the whole update chain
@@ -147,11 +106,43 @@
         // Once all the operations are done, check that everything is reconciled. May throw.
         DataNode.validate();
 
-        // If it's all good, run the side effects
+        // If it's all good, commit the change and run the side effects
+        this._lastVal = this._rollbackVal;
+
         this._runSubscribers();
 
         // Writes should return the value, for the sake of 'a = b = c'-style assignments.
         return this._value;
+    };
+
+    DataNode_prototype._runComputed = function() {
+        runningComputed = this;
+
+        this._rollbackVal = this._value;
+
+        let error;
+        try {
+            this._value = this._computed();
+        } catch (e) {
+            error = e;
+        }
+
+        runningComputed = null;
+
+        if (error) {
+            this.onError();
+            throw error;
+        }
+    };
+
+    /**
+     * Managing 'staleness'
+     */
+
+    DataNode_prototype._broadcastStale = function() {
+        for (let i = 0; i < this._children.length; i++) {
+            this._children[i].setStale();
+        }
     };
 
     DataNode_prototype.setStale = function() {
@@ -175,6 +166,12 @@
         this._staledItemsPosition = -1;
     };
 
+    DataNode_prototype._broadcastReady = function() {
+        for (let i = 0; i < this._children.length; i++) {
+            this._children[i].setReady();
+        }
+    };
+
     DataNode_prototype.setReady = function() {
         // If we're about to become unstale, run the computed now to discover any more dynamic dependencies
         if (this._staleness == 1 && this._computed) {
@@ -186,22 +183,58 @@
         if (this._staleness == 0) {
             // We have become unstale
             // As with the staleness message, it's very important we only dispatch a ready message we completely trust
+
+            // Only alter lastVal once we've reached the final change
+            this._lastVal = this._rollbackVal;
+
             this._unregisterStaled();
             this._broadcastReady();
             this._runSubscribers();
         }
     };
 
-    DataNode_prototype._broadcastReady = function() {
-        for (let i = 0; i < this._children.length; i++) {
-            this._children[i].setReady();
+    /**
+     * Detecting circularity
+     */
+
+    DataNode.validate = function() {
+        let unreconciled;
+        for (let i = 0; i < staledItems.length; i++) {
+            if (staledItems[i] !== null) {
+                unreconciled = staledItems[i];
+                break;
+            }
         }
+        staledItems.length = 0;
+        if (unreconciled) DataNode.foundCircular(unreconciled);
     };
 
-    DataNode_prototype._broadcastStale = function() {
-        for (let i = 0; i < this._children.length; i++) {
-            this._children[i].setStale();
-        }
+    DataNode.foundCircular = function(unreconciled) {
+        throw new Error('Circular dependency detected. Trkl has stopped. Suspicious function is: ' + unreconciled._computed.toString());
+    };
+
+    /**
+     * Handling exceptions
+     */
+
+    DataNode_prototype.onError = function() {
+        this._value = this._rollbackVal;
+        this._staleness = 0;
+        this._children && this._children.forEach(child => child.onError());
+    };
+
+    /**
+     * Side effects (subscriptions)
+     */
+
+    DataNode_prototype.sub = function(func, immediate) {
+        if (this._subscribers.indexOf(func) == -1) this._subscribers.push(func);
+        if (immediate) func(this._value, this._lastVal);
+    };
+
+    DataNode_prototype.unsub = function(func) {
+        let pos = this._subscribers.indexOf(func);
+        if (pos > -1) this._subscribers.splice(pos, 1);
     };
 
     DataNode_prototype._runSubscribers = function() {
@@ -221,6 +254,10 @@
         }
         if (error) window.setTimeout(()=> {throw error;}, 0);
     };
+
+    /**
+     * Export
+     */
 
     return trkl;
 }));

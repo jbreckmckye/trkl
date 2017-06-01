@@ -29,14 +29,27 @@ describe('trkl observables', ()=> {
 	});
 
 	it('A subscriber can be run immediately', ()=> {
-		const value = {};
-		const lastVal = undefined;
-		const observable = trkl(value);
+		const val1 = {};
+		const val2 = {};
+
+		const observable = trkl(val1);
+		observable(val2);
+
 		const listener = jasmine.createSpy('listener');
 
 		observable.subscribe(listener, true);
 
-		expect(listener).toHaveBeenCalledWith(value, lastVal);
+		expect(listener).toHaveBeenCalledWith(val1, val2);
+	});
+
+	it('The initial lastVal is undefined', ()=> {
+		const val1 = {};
+		const observable = trkl(val1);
+
+		const listener = jasmine.createSpy('listener');
+
+		observable.subscribe(listener, true);
+		expect(listener).toHaveBeenCalledWith(val1, undefined);
 	});
 
 	it('Can be unsubscribed from', ()=> {
