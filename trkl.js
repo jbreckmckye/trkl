@@ -43,6 +43,10 @@
         return observable;
     };
 
+    /**
+     * DataNode
+     */
+
     function DataNode(val, computed) {
         this._staleness = 0;
         this._staledItemsPosition = -1;

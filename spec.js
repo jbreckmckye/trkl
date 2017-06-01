@@ -143,6 +143,75 @@ describe('A computed', ()=> {
 	});
 });
 
+describe('Computed de-duplication', ()=> {
+
+	it('in a diamond tree (A =-> B C ; B C -> D), D only gets run once when A updates', ()=> {
+		//     A
+		//   /   \
+		//  B     C
+		//   \   /
+		//     D
+		const a = trkl(1);
+		const b = trkl.computed(()=> a() + 1);
+		const c = trkl.computed(()=> a() + 1);
+
+		let d_run_count = 0;
+		const d = trkl.computed(()=> {
+			d_run_count++;
+			return b() + c();
+		});
+
+		expect(d_run_count).toBe(1); // initial run
+		a(3);
+		expect(d_run_count).toBe(2); // run again once, despite two dependencies changing
+	});
+
+	it('if a node adds a dynamic dependency, it still only runs once if that dependency is already ready', ()=> {
+        //     A
+        //   /   \
+        //  B     C
+        //   \   /
+        //     D
+        const a = trkl(1);
+        const b = trkl.computed(()=> a() + 1);
+        const c = trkl.computed(()=> a() + 2);
+
+        let d_run_count = 0;
+        const d = trkl.computed(()=> {
+            d_run_count++;
+            return a() < 10 ? b() : c(); // initial deps: A, B
+        });
+
+        expect(d_run_count).toBe(1); // initial run
+		a(20);
+		expect(d_run_count).toBe(2); // by the time d is run, b and c have been finalized, so d need only run once
+	});
+
+	it('if a node adds a dynamic dependency, may run twice if that dependency is not ready', ()=> {
+        //   A
+        //   | \
+		//   |  B
+		//   | /
+		//   C
+        const a = trkl(1);
+
+        let c_run_count = 0;
+        const c = trkl.computed(()=> {
+        	c_run_count++;
+        	return a() < 10 ? a() : b(); // initial deps: A
+		});
+
+        const b = trkl.computed(()=> a() + 1);
+
+        expect(c_run_count).toBe(1); // initial run
+		a(20);
+		// C and B will update, in that order, but B won't be ready when C runs
+		// Therefore C will _have_ to run twice
+		expect(c_run_count).toBe(3);
+	})
+
+});
+
 describe('trkl.from', ()=> {
 
 	it('creates an observable', ()=> {
