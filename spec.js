@@ -208,7 +208,65 @@ describe('Computed de-duplication', ()=> {
 		// C and B will update, in that order, but B won't be ready when C runs
 		// Therefore C will _have_ to run twice
 		expect(c_run_count).toBe(3);
-	})
+	});
+});
+
+describe('error handling', ()=> {
+
+	it('if a computed throws an error, the error is not swallowed', ()=> {
+		const a = trkl(1);
+		const b = trkl.computed(()=> {
+			if (a() > 5) throw new Error('I have exploded');
+		});
+
+		const risky = ()=> a(6);
+
+		expect(risky).toThrowError('I have exploded');
+	});
+
+	it('if a computed throws an error, everything is rolled back', ()=> {
+		const a = trkl(1);
+		const b = trkl.computed(()=> a() + 1);
+		const c = trkl.computed(()=> b() + 1);
+		const d = trkl.computed(()=> {
+			if (a() > 5) {
+                throw new Error('I have exploded');
+			}
+		});
+
+		const risky = ()=> a(6);
+
+		try {
+			risky()
+		} catch (e) {
+			expect(a()).toBe(1); // initial values
+			expect(b()).toBe(2);
+			expect(c()).toBe(3);
+		}
+	});
+
+	it('if a computed throws an error, we can resume the data flow with valid data', ()=> {
+		 const name = trkl('Billy');
+		 const last = trkl('Pilgrim');
+		 const fullName = trkl.computed(()=> {
+		 	if (name().length == 0 || last().length == 0) {
+		 		throw new Error('You must provide a first and last name');
+			} else {
+		 		return name() + ' ' + last();
+			}
+		 });
+
+		 try {
+		 	name('Kilgore');
+		 	last('');
+		 } catch (e) {
+		 	// Should emit error
+		 }
+
+		 last('Trout');
+
+		 expect(fullName()).toBe('Kilgore Trout');
+	});
 
 });
 
