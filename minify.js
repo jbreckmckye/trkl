@@ -14,7 +14,7 @@ const options = {
             regex: /^_|read|write|setStale|setReady|validate|foundCircular|onError/
         }
     },
-    toplevel: false,
+    toplevel: true,
     ie8: false
 };
 

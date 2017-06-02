@@ -1,5 +1,5 @@
 'use strict';
-let trkl = window.trkl;
+var trkl = window.trkl;
 
 describe('trkl observables', ()=> {
 
