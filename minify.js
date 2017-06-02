@@ -8,7 +8,8 @@ const options = {
     warnings: true,
     compress: {
         unsafe: true,
-        passes: 5
+        passes: 5,
+        pure_getters: true
     },
     mangle: {
         properties: {
