@@ -140,8 +140,6 @@ DataNode_prototype.write = function(next) {
 DataNode_prototype._runComputed = function() {
     runningComputed = this;
 
-    this._rollbackVal = this._value;
-
     var error;
     try {
         this._value = this._computed();
@@ -172,6 +170,10 @@ DataNode_prototype.setStale = function() {
     if (this._staleness == 1) {
         // just became stale
         // It's very important that we only broadcast our staleness to the world once
+
+        // We will need this if something breaks
+        this._rollbackVal = this._value;
+
         for (var i = 0; i < this._children.length; i++) {
             this._children[i].setStale();
         }
@@ -208,11 +210,14 @@ DataNode_prototype.setReady = function() {
         // We have become unstale
         // As with the staleness message, it's very important we only dispatch a ready message we completely trust
 
-        // Only alter lastVal once we've reached the final change
+        this._unregisterStaled();
+
+        // May throw errors - don't commit to the new current / last vals just yet
+        this._broadcastReady();
+
+        // *Now* we can commit to the change
         this._lastVal = this._rollbackVal;
 
-        this._unregisterStaled();
-        this._broadcastReady();
         this._runSubscribers();
     }
 };
