@@ -235,19 +235,26 @@ describe('error handling', ()=> {
 		const b = trkl.computed(()=> a() + 1);
 		const c = trkl.computed(()=> b() + 1);
 		const d = trkl.computed(()=> {
-			if (a() > 5) {
+			if (a() > 1) {
                 throw new Error('I have exploded');
+			} else {
+				return 4;
 			}
 		});
+		const e = trkl.computed(()=> {
+            return d() + a();
+		});
 
-		const risky = ()=> a(6);
+		const risky = ()=> a(3);
 
 		try {
 			risky()
-		} catch (e) {
+		} catch (err) {
 			expect(a()).toBe(1); // initial values
 			expect(b()).toBe(2);
 			expect(c()).toBe(3);
+			expect(d()).toBe(4);
+			expect(e()).toBe(5);
 		}
 	});
 
