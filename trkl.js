@@ -150,7 +150,6 @@ DataNode_prototype._runComputed = function() {
     runningComputed = null;
 
     if (error) {
-        this.onError();
         throw error;
     }
 };
@@ -249,6 +248,7 @@ DataNode.foundCircular = function(unreconciled) {
 DataNode_prototype.onError = function() {
     this._value = this._rollbackVal;
     this._staleness = 0;
+    this._unregisterStaled();
     for (var i = 0; i < this._children.length; i++) {
         this._children[i].onError();
     }

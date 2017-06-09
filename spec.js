@@ -230,20 +230,23 @@ describe('error handling', ()=> {
 		expect(risky).toThrowError('I have exploded');
 	});
 
-	it('if a computed throws an error, everything is rolled back', ()=> {
+	it('if a computed throws an error, the data flow stops and everything rolls back', ()=> {
+		// Fibonacci series
 		const a = trkl(1);
-		const b = trkl.computed(()=> a() + 1);
-		const c = trkl.computed(()=> b() + 1);
+		const b = trkl.computed(()=> 1 + a());
+		const c = trkl.computed(()=> a() + b());
 		const d = trkl.computed(()=> {
-			if (a() > 1) {
+			if (a() > 2) {
                 throw new Error('I have exploded');
 			} else {
-				return 4;
+				return b() + c();
 			}
 		});
 		const e = trkl.computed(()=> {
-            return d() + a();
+            return c() + d();
 		});
+        const listener = jasmine.createSpy('listener');
+        e.subscribe(listener);
 
 		const risky = ()=> a(3);
 
@@ -253,32 +256,42 @@ describe('error handling', ()=> {
 			expect(a()).toBe(1); // initial values
 			expect(b()).toBe(2);
 			expect(c()).toBe(3);
-			expect(d()).toBe(4);
-			expect(e()).toBe(5);
+			expect(d()).toBe(5);
+			expect(e()).toBe(8);
+			expect(listener).not.toHaveBeenCalled();
 		}
 	});
 
 	it('if a computed throws an error, we can resume the data flow with valid data', ()=> {
-		 const name = trkl('Billy');
-		 const last = trkl('Pilgrim');
-		 const fullName = trkl.computed(()=> {
-		 	if (name().length == 0 || last().length == 0) {
-		 		throw new Error('You must provide a first and last name');
-			} else {
-		 		return name() + ' ' + last();
-			}
-		 });
+		// Fibonacci series
+        const a = trkl(1);
+        const b = trkl.computed(()=> 1 + a());
+        const c = trkl.computed(()=> a() + b());
+        const d = trkl.computed(()=> {
+            if (a() > 2) {
+                throw new Error('I have exploded');
+            } else {
+                return b() + c();
+            }
+        });
+        const e = trkl.computed(()=> {
+            return c() + d();
+        });
+        const listener = jasmine.createSpy('listener');
+        e.subscribe(listener);
 
-		 try {
-		 	name('Kilgore');
-		 	last('');
-		 } catch (e) {
-		 	// Should emit error
-		 }
+        try {
+        	a(3); // will throw
+		} catch (err) {}
 
-		 last('Trout');
+		a(2);
 
-		 expect(fullName()).toBe('Kilgore Trout');
+        expect(a()).toBe(2);
+        expect(b()).toBe(3);
+        expect(c()).toBe(5);
+        expect(d()).toBe(8);
+        expect(e()).toBe(13);
+        expect(listener).toHaveBeenCalled();
 	});
 
 });
