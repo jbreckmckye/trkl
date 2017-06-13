@@ -171,3 +171,7 @@ A subscription can mutate the observable's subscriber list (e.g. a subscriber ca
 ### observable.unsubscribe(fn)
 
 Remove the specified function as a subscriber.
+
+## Why 'trkl'?
+
+Because it's like a stream, except smaller (a 'trickle'), except even smaller than that ('trkl').
