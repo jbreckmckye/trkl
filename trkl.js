@@ -12,7 +12,7 @@ function trkl(initValue) {
         }
     };
 
-    // Using string keys tells the Google Closure compiler that we intend to export these symbols
+    // Using string keys tells Uglify that we intend to export these symbols
     self['subscribe'] = subscribe;
 
     // declaring as a private function means the minifier can scrub its name on internal references
@@ -40,7 +40,7 @@ function trkl(initValue) {
     function read () {
         var runningComputation = computedTracker[computedTracker.length - 1];
         if (runningComputation) {
-            subscribe(runningComputation.subscriber);
+            subscribe(runningComputation._subscriber);
         }
         return value;
     }
@@ -51,7 +51,7 @@ function trkl(initValue) {
 trkl['computed'] = function (fn) {
     var self = trkl();
     var computationToken = {
-        subscriber : runComputed
+        _subscriber : runComputed
     };
 
     runComputed();
