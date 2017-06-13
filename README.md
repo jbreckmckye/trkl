@@ -47,7 +47,7 @@ You can either drop `trkl.min.js` straight into your project, or run
 npm install trkl --save
 ```    
 
-Trkl works in both CommonJS and browser environments.
+Trkl works in both CommonJS and browser environments. If you need AMD support, use v1.5.1
 
 ## API
 
