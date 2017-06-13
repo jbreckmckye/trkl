@@ -17,7 +17,7 @@ function trkl(initValue) {
 
     // declaring as a private function means the minifier can scrub its name on internal references
     function subscribe(subscriber, immediate) {
-        if (absent(subscribers, subscriber)) {
+        if (!~subscribers.indexOf(subscriber)) {
             subscribers.push(subscriber);
         }
         if (immediate) {
@@ -84,10 +84,6 @@ function detectCircularity(token) {
     if (computedTracker.indexOf(token) !== -1) {
         throw Error('Circular computation detected');
     }
-}
-
-function absent(array, item) {
-    return array.indexOf(item) === -1;
 }
 
 function remove(array, item) {
