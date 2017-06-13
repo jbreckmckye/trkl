@@ -48,6 +48,26 @@ describe('trkl observables', ()=> {
 		observable(123);
 		expect(listener).not.toHaveBeenCalled();
 	});
+
+	it('Subscribers can remove themselves without disrupting others', ()=> {
+		const observable = trkl();
+		const listener1 = jasmine.createSpy('listener 1').and.callFake(()=> {
+			observable.unsubscribe(listener1);
+		});
+		const listener2 = jasmine.createSpy('listener 2');
+
+		observable.subscribe(listener1);
+		observable.subscribe(listener2);
+
+		observable(123);
+		expect(listener1).toHaveBeenCalled();
+		expect(listener2).toHaveBeenCalled();
+
+
+		observable(456);
+		expect(listener1).toHaveBeenCalledTimes(1);
+		expect(listener2).toHaveBeenCalledTimes(2);
+	});
 });
 
 describe('A computed', ()=> {
