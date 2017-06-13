@@ -13,7 +13,7 @@ const options = {
     },
     mangle: {
         properties: {
-            regex: /^_|read|write|setStale|setReady|validate|foundCircular|onError/
+            regex: /^_/
         }
     },
     toplevel: true,
