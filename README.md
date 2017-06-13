@@ -1,7 +1,7 @@
 # trkl
 Reactive JavaScript programming in less than half a kilobyte.
 
-For just a meagre **424 bytes** (minified and gzipped), you get
+For just a meagre **403 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
 - powerful Knockout.js-style computeds with proper "magical" dependency tracking
@@ -47,7 +47,7 @@ You can either drop `trkl.min.js` straight into your project, or run
 npm install trkl --save
 ```    
 
-Trkl works in both CommonJS and AMD environments, but it can also create a simple `window.trkl` object otherwise.
+Trkl works in both CommonJS and browser environments.
 
 ## API
 

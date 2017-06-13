@@ -27,5 +27,8 @@
     "karma-chrome-launcher": "^2.1.1",
     "karma-jasmine": "^1.1.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "gzip-size": "3.0.0",
+    "uglify-es": "3.0.15"
+  }
 }
