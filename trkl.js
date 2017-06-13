@@ -46,7 +46,7 @@
         function write (newValue) {
             var oldValue = value;       
             value = newValue;
-            subscribers.forEach(function (subscriber) {
+            subscribers.slice().forEach(function (subscriber) {
                 subscriber(value, oldValue);
             });
         }

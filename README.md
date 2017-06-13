@@ -166,6 +166,8 @@ If you pass the same subscriber multiple times, it will be de-duplicated, and on
 
 If you pass a truthy value to `immediate`, the subscriber will also run immediately.
 
+A subscription can mutate the observable's subscriber list (e.g. a subscriber can remove itself), but the mutation won't take effect until the next time the observer changes.
+
 ### observable.unsubscribe(fn)
 
 Remove the specified function as a subscriber.
