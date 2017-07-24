@@ -103,8 +103,8 @@ function remove(array, item) {
     }
 }
 
-if (typeof window === 'object') {
-    window['trkl'] = trkl;
-} else {
+if (typeof module === 'object') {
     module.exports = trkl;
+} else {
+    window['trkl'] = trkl;
 }
