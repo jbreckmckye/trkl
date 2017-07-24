@@ -37,12 +37,11 @@ function trkl(initValue) {
 
         // Clone subscribers into tmpArray so that subscriptions can mutate the subscribers array safely
         tmpArray.length = 0;
-        var subCount = subscribers.length;
-        for (i = 0; i < subCount; i++) {
+        for (i = 0; i < subscribers.length; i++) {
             tmpArray.push(subscribers[i]);
         }
 
-        for (i = 0; i < subCount; i++) {
+        for (i = 0; i < tmpArray.length; i++) {
             tmpArray[i](value, oldValue);
         }
     }
