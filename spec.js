@@ -63,10 +63,8 @@ describe('trkl observables', ()=> {
 		expect(listener1).toHaveBeenCalled();
 		expect(listener2).toHaveBeenCalled();
 
-
 		observable(456);
 		expect(listener1).toHaveBeenCalledTimes(1);
-		expect(listener2).toHaveBeenCalledTimes(2);
 	});
 });
 
