@@ -1,6 +1,4 @@
 var computedTracker = [];
-var tmpArray = [];
-var i;
 
 function trkl(initValue) {
     var value = initValue;
@@ -34,16 +32,9 @@ function trkl(initValue) {
     function write (newValue) {
         var oldValue = value;
         value = newValue;
-
-        // Clone subscribers into tmpArray so that subscriptions can mutate the subscribers array safely
-        tmpArray.length = 0;
-        for (i = 0; i < subscribers.length; i++) {
-            tmpArray.push(subscribers[i]);
-        }
-
-        for (i = 0; i < tmpArray.length; i++) {
-            tmpArray[i](value, oldValue);
-        }
+        subscribers.slice().forEach(function (subscriber) {
+            subscriber(value, oldValue);
+        });
     }
 
     function read () {
