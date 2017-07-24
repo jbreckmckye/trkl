@@ -1,6 +1,6 @@
 {
   "name": "trkl",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Reactive microlibrary offering Knockout-style observables and computeds for less than 500 bytes",
   "main": "trkl-min.js",
   "scripts": {
