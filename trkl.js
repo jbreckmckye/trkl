@@ -1,5 +1,9 @@
 var computedTracker = [];
 
+// We will need to copy subscriptions here during writes, so that subscriptions can edit their original subscription lists
+// safely. This is necessary for subscriptions that remove themselves.
+var effects = [];
+
 function trkl(initValue) {
     var value = initValue;
     var subscribers = [];
@@ -32,9 +36,12 @@ function trkl(initValue) {
     function write (newValue) {
         var oldValue = value;
         value = newValue;
-        subscribers.slice().forEach(function (subscriber) {
-            subscriber(value, oldValue);
-        });
+        effects.push.apply(effects, subscribers);
+        for (var i = 0; i < subscribers.length; i++) {
+            // If a sub throws an error, the effects array will just keep growing and growing.
+            // It won't stop operating properly, but it might eat memory. We're okay with this, I guess?
+            effects.pop()(value, oldValue);
+        }
     }
 
     function read () {
