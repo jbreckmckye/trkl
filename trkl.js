@@ -37,7 +37,12 @@ function trkl(initValue) {
         var oldValue = value;
         value = newValue;
         effects.push.apply(effects, subscribers);
-        for (var i = 0; i < subscribers.length; i++) {
+
+        // We will now rewind through as many effects as we have subscribers
+        // We don't recheck the length during the loop, as subscribers may be mutated
+        // (e.g. when a subscribers unsubs itself)
+        var subCount = subscribers.length;
+        for (var i = 0; i < subCount; i++) {
             // If a sub throws an error, the effects array will just keep growing and growing.
             // It won't stop operating properly, but it might eat memory. We're okay with this, I guess?
             effects.pop()(value, oldValue);
