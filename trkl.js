@@ -35,6 +35,11 @@ function trkl(initValue) {
 
     function write (newValue) {
         var oldValue = value;
+
+        if (newValue === oldValue && (newValue === null || typeof newValue !== 'object')) {
+            return; // bail out
+        }
+
         value = newValue;
         effects.push.apply(effects, subscribers);
 
