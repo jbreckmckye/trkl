@@ -1,7 +1,7 @@
 # trkl
 Reactive JavaScript programming in less than half a kilobyte.
 
-For just a meagre **412 bytes** (minified and gzipped), you get
+For just a meagre **434 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
 - powerful Knockout.js-style computeds with proper "magical" dependency tracking
@@ -151,7 +151,7 @@ Every time the user clicks, clicks is updated with the latest coordinates.
 
 ### observable.subscribe(fn, ?immediate)
 
-When an observable is updated, pass its new and old values to the supplied subscriber.
+When an observable's value changes, pass its new and old values to the supplied subscriber.
 
 ```javascript
 let numbers = trkl(1);
@@ -167,6 +167,8 @@ If you pass the same subscriber multiple times, it will be de-duplicated, and on
 If you pass a truthy value to `immediate`, the subscriber will also run immediately.
 
 A subscription can mutate the observable's subscriber list (e.g. a subscriber can remove itself), but the mutation won't take effect until the next time the observer changes.
+
+Note that Trkl will only filter out duplicate updates if the values are primitives, not objects or arrays. If you write an unchanged object to an observable twice, Trkl could only tell the object was changed by inspecting the whole tree of properties. This would be expensive, so we don't bother.
 
 ### observable.unsubscribe(fn)
 

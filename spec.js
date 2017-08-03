@@ -66,6 +66,65 @@ describe('trkl observables', ()=> {
 		observable(456);
 		expect(listener1).toHaveBeenCalledTimes(1);
 	});
+
+	it('filters out duplicate writes (if primitives)', ()=> {
+		const observable = trkl(1);
+		const symbol = Symbol();
+		const listener = jasmine.createSpy('listener');
+
+		observable.subscribe(listener);
+
+		observable(1);
+		expect(listener).toHaveBeenCalledTimes(0);
+
+		observable('a string');
+		expect(listener).toHaveBeenCalledTimes(1);
+		observable('a string');
+		expect(listener).toHaveBeenCalledTimes(1);
+
+        observable(true);
+        expect(listener).toHaveBeenCalledTimes(2);
+        observable(true);
+        expect(listener).toHaveBeenCalledTimes(2);
+
+        observable(null);
+        expect(listener).toHaveBeenCalledTimes(3);
+        observable(null);
+        expect(listener).toHaveBeenCalledTimes(3);
+
+        observable(undefined);
+        expect(listener).toHaveBeenCalledTimes(4);
+        observable(undefined);
+        expect(listener).toHaveBeenCalledTimes(4);
+
+        observable(symbol);
+        expect(listener).toHaveBeenCalledTimes(5);
+        observable(symbol);
+        expect(listener).toHaveBeenCalledTimes(5);
+	});
+
+	it('does not filter out duplicate writes of objects or arrays', ()=> {
+        const array = [];
+        const object = {};
+
+		const observable = trkl(array);
+        const listener = jasmine.createSpy('listener');
+
+        observable.subscribe(listener);
+
+        observable(array);
+        expect(listener).toHaveBeenCalledTimes(1);
+
+        observable(array);
+        expect(listener).toHaveBeenCalledTimes(2);
+
+        observable(object);
+        expect(listener).toHaveBeenCalledTimes(3);
+
+        observable(object);
+        expect(listener).toHaveBeenCalledTimes(4);
+    });
+
 });
 
 describe('A computed', ()=> {
