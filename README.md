@@ -170,7 +170,7 @@ A subscription can mutate the observable's subscriber list (e.g. a subscriber ca
 
 #### A note on deduplication
 
-Note that Trkl will only filter out duplicate updates if the values are primitives, not objects or arrays. If you were to write two objects to an observable, Trkl could only tell whether the second was different by recursively inspecting the whole tree of properties. This would be expensive, and could lead us into circular inspections, so we don't bother.
+Note that Trkl will only filter out duplicate updates if the values are primitives, not objects or arrays. Why? Well, if you have two objects or arrays, you can only tell if their values have changed by recursively inspecting the whole tree of their properties. This would be expensive, and could lead us into circular inspections, so for performance and size reasons we don't bother.
 
 If you really need to filter out duplicates, you could always do
 
