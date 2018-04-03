@@ -49,6 +49,14 @@ npm install trkl --save
 
 Trkl works in both CommonJS and browser environments. If you need AMD support, use v1.5.1
 
+## Use with TypeScript
+
+Just `import * as trkl from 'trkl'`.
+
+Types are defined in `index.d.ts`.
+
+It's assumed that the types inside observables are immutable. If you need to initialise a type-less observable use `foo = trkl(undefined as any)`;
+
 ## API
 
 ### trkl()
