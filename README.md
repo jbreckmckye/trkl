@@ -176,7 +176,25 @@ If you pass a truthy value to `immediate`, the subscriber will also run immediat
 
 A subscription can mutate the observable's subscriber list (e.g. a subscriber can remove itself), but the mutation won't take effect until the next time the observer changes.
 
-Note that Trkl will only filter out duplicate updates if the values are primitives, not objects or arrays. If you were to write an unchanged object to an observable twice, Trkl could only tell the object was changed by inspecting the whole tree of properties. This would be expensive, and could lead us into circular inspections, so we don't bother.
+#### A note on deduplication
+
+Note that Trkl will only filter out duplicate updates if the values are primitives, not objects or arrays. Why? Well, if you have two objects or arrays, you can only tell if their values have changed by recursively inspecting the whole tree of their properties. This would be expensive, and could lead us into circular inspections, so for performance and size reasons we don't bother.
+
+If you really need to filter out duplicates, you could always do
+
+```javascript
+const filter = trkl.from(observer => {
+  source.subscribe((newVal, oldVal) => {
+    if (newVal.length && (newVal.length !== oldVal.length)) {
+      observer(newVal);
+    } else if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+      observer(newVal);
+    }
+  });
+});
+```
+
+This will only work if your objects / arrays are JSON-serializable, though.
 
 ### observable.unsubscribe(fn)
 
