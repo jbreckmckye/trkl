@@ -1,5 +1,5 @@
 # trkl
-Reactive JavaScript programming in less than half a kilobyte.
+Reactive JavaScript programming in less than half a kilobyte. Supports TypeScript.
 
 For just a meagre **434 bytes** (minified and gzipped), you get
 
