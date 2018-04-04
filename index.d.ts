@@ -2,38 +2,38 @@ export as namespace trkl;
 
 export = trkl;
 
-declare interface TrklObservable<T> {
-    (newValue: T): void; // write
-    (): T; // read
-
-    subscribe: AddSubscriber<T>;
-    unsubscribe: RemoveSubscriber;
-}
-
-declare interface Subscriber<T> {
-    (latest: T, last?: T): any | void;
-}
-
-declare interface AddSubscriber<T> {
-    (subscriber: Subscriber<T>, runImmediate?: boolean): void;
-}
-
-declare interface RemoveSubscriber {
-    (subscriber: Subscriber<any>): void;
-}
-
-declare interface Computation<T> {
-    (): T;
-}
-
-declare interface Writer {
-    (observable: TrklObservable<any>): void;
-}
-
-declare function trkl<T>(seed?: T): TrklObservable<T>;
+declare function trkl<T>(seed?: T): trkl.Observable<T>;
 
 declare namespace trkl {
-    export function computed<T>(executor: Computation<T>): TrklObservable<T>;
+    export function computed<T>(executor: Computation<T>): trkl.Observable<T>;
 
-    export function from(executor: Writer): TrklObservable<any>;
+    export function from(executor: Writer): trkl.Observable<any>;
+
+    interface Observable<T> {
+        (newValue: T): void; // write
+        (): T; // read
+
+        subscribe: AddSubscriber<T>;
+        unsubscribe: RemoveSubscriber;
+    }
+
+    interface Subscriber<T> {
+        (latest: T, last?: T): any | void;
+    }
+
+    interface AddSubscriber<T> {
+        (subscriber: Subscriber<T>, runImmediate?: boolean): void;
+    }
+
+    interface RemoveSubscriber {
+        (subscriber: Subscriber<any>): void;
+    }
+
+    interface Computation<T> {
+        (): T;
+    }
+
+    interface Writer {
+        (observable: trkl.Observable<any>): void;
+    }
 }
