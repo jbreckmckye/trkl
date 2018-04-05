@@ -98,11 +98,11 @@ let c = trkl.computed(()=> {
 });
 
 c.subscribe(newVal => {
-    console.log("c's value is now ", newVal);
+    print(`a + b = ${newVal}`);
 });
 
-a(5); // Console => "c's value is now 5"
-b(3); // Console => "c's value is now 8"
+a(5); // Print "a + b = 5"
+b(3); // Print "a + b = 8"
 ```
 
 You don't have to provide anything to computed to notify if it of your dependencies. This differs from other libraries, where you have to remember to explicitly pass in all the observables your computation depends on.
