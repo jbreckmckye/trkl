@@ -1,11 +1,12 @@
 # trkl
-Reactive JavaScript programming in less than half a kilobyte. Supports TypeScript.
+Reactive JavaScript programming in less than half a kilobyte.
 
 For just a meagre **434 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
 - powerful Knockout.js-style computeds with proper "magical" dependency tracking
 - circular reference detection
+- (New!) TypeScript project support
 
 The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
 
@@ -13,31 +14,34 @@ My motto is: "If you can find a smaller reactive programming microlibrary... kee
 
 ## Give me the gist
 
+The basic building block is the **Observable**. It's a data container you can subscribe to:
+
 ```javascript
-/**
-* Pub-sub
-*/
-const oranges = trkl(4);
+const oranges = trkl(2);
 
-oranges.subscribe(_ => console.log('We have', _, 'oranges'));
+print(oranges()); // Print "2"
 
-oranges(5); // Console logs, "We have 5 oranges"
+oranges.subscribe(print);
 
-/**
-* Computeds
-*/
-
-const apples = trkl(2);
-const bananas = trkl(5);
-
-trkl.computed(()=> {
-    const totalFruit = apples() + bananas();
-    console.log('We have', totalFruit, 'fruit');
-});
-// Console logs, "We have 7 fruit"
-
-apples(4); // Console logs, "We have 9 fruit"
+oranges(3); // Print "3"
 ```
+
+Pretty simple. But things get interesting when you combine observables using **computeds**:
+
+```javascript
+const oranges = trkl(2);
+const lemons = trkl(2);
+
+const fruit = trkl.computed(()=> oranges() + lemons());
+
+print(fruit()); // Print "4"
+
+fruit.subscribe(print);
+
+lemons(3); // Print "5"
+```
+
+In a nutshell: Trkl lets you create observable channels of data, and then combine them with functions to result in further observables.
 
 ## Installation
 
@@ -45,13 +49,17 @@ You can either drop `trkl.min.js` straight into your project, or run
 
 ```
 npm install trkl --save
-```    
+```
 
 Trkl works in both CommonJS and browser environments. If you need AMD support, use v1.5.1
 
-## Use with TypeScript
+### Importing
 
-Just `import * as trkl from 'trkl'`.
+Node / SystemJS: `const trkl = require('trkl');`
+
+ES6 / TypeScript: `import * as trkl from 'trkl';`
+
+## TypeScript support
 
 Types are defined in `index.d.ts`.
 
@@ -102,30 +110,20 @@ You don't have to provide anything to computed to notify if it of your dependenc
 Dependencies can even be dynamic!
 
 ```javascript
-let a = trkl(1);
-let b = trkl(2);
-let bool = trkl(true);
+const a = trkl('A');
+const b = trkl('B');
+const readA = trkl(true);
 
-const c = trkl.computed(()=> {
-    if (bool()) {
-        console.log('A is', a());
-    } else {
-        console.log('B is', b());
-    }
+const reader = trkl.computed(()=> {
+    return readA() ? a() : b();
 });
 
-// Console log -> "A is 1"
-a(3);
-// Console log -> "A is 3"
-bool(false);
-// Console log -> "B is 2"
-b(4);
-// Console log -> "B is 4"
-bool(true);
-// Console log -> "A is 3"
-```
+print(reader()); // 'A'
 
-The computed `c` starts with a dependency on `bool` and `a`. When `bool` changes, we re-run the function and capture a dependency on `b`.
+readB(false);
+
+print(reader()); // 'B'
+```
 
 **What about circular references?**
 
@@ -176,7 +174,7 @@ If you pass a truthy value to `immediate`, the subscriber will also run immediat
 
 A subscription can mutate the observable's subscriber list (e.g. a subscriber can remove itself), but the mutation won't take effect until the next time the observer changes.
 
-#### A note on deduplication
+#### How updates are deduplicated
 
 Note that Trkl will only filter out duplicate updates if the values are primitives, not objects or arrays. Why? Well, if you have two objects or arrays, you can only tell if their values have changed by recursively inspecting the whole tree of their properties. This would be expensive, and could lead us into circular inspections, so for performance and size reasons we don't bother.
 
