@@ -6,7 +6,7 @@ For just a meagre **434 bytes** (minified and gzipped), you get
 - observables with a pub/sub interface
 - powerful Knockout.js-style computeds with proper "magical" dependency tracking
 - circular reference detection
-- (New!) TypeScript project support
+- TypeScript project support
 
 The basic idea is to provide the most 'bang for buck' in terms of bytes down the wire versus expressiveness and utility.
 
@@ -14,31 +14,28 @@ My motto is: "If you can find a smaller reactive programming microlibrary... kee
 
 ## Give me the gist
 
-The basic building block is the **Observable**. It's a data container you can subscribe to:
+Data is held in **Observables**, which expose pub / sub capabilities:
 
 ```javascript
-const oranges = trkl(2);
+const apples = trkl(2);
 
-print(oranges()); // Print "2"
+apples.subscribe(n => console.log(`There are ${n} apples`));
 
-oranges.subscribe(print);
-
-oranges(3); // Print "3"
+apples(7); // Prints "There are 7 apples"
 ```
 
-Pretty simple. But things get interesting when you combine observables using **computeds**:
+Combine data from observables using **Computeds**, which automatically track their dependencies:
 
 ```javascript
-const oranges = trkl(2);
-const lemons = trkl(2);
+const bananas = trkl(3);
 
-const fruit = trkl.computed(()=> oranges() + lemons());
+const fruit = trkl.computed(()=> {
+    return apples() + bananas();
+});
 
-print(fruit()); // Print "4"
+fruit.subscribe(n => console.log(`There are ${n} fruit in total`));
 
-fruit.subscribe(print);
-
-lemons(3); // Print "5"
+apples(6); // Prints "There are 9 fruit in total"
 ```
 
 In a nutshell: Trkl lets you create observable channels of data, and then combine them with functions to result in further observables.
