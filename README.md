@@ -1,7 +1,7 @@
 # trkl
 Reactive JavaScript programming in less than half a kilobyte.
 
-For just a meagre **434 bytes** (minified and gzipped), you get
+For just a meagre **393 bytes** (minified and gzipped), you get
 
 - observables with a pub/sub interface
 - powerful Knockout.js-style computeds with proper "magical" dependency tracking
@@ -48,7 +48,13 @@ You can either drop `trkl.min.js` straight into your project, or run
 npm install trkl --save
 ```
 
-Trkl works in both CommonJS and browser environments. If you need AMD support, use v1.5.1
+Trkl works in both CommonJS and browser environments.
+
+**Versions**
+
+If you need AMD support, use v1.5.1
+
+v2+ is ES6 only; v1.x supports ES5
 
 ### Importing
 
@@ -129,7 +135,7 @@ If we have an observable *a* that informs an computed *b*, and then we have a ne
 Luckily, trkl will detect such instances and immediately throw an exception:
 
 ```
-Circular reference detected
+Error: Circular computation
 ```
 
 ### trkl.from(observable => {...})
@@ -169,7 +175,7 @@ If you pass the same subscriber multiple times, it will be de-duplicated, and on
 
 If you pass a truthy value to `immediate`, the subscriber will also run immediately.
 
-A subscription can mutate the observable's subscriber list (e.g. a subscriber can remove itself), but the mutation won't take effect until the next time the observer changes.
+A subscription can safely mutate the observable's subscriber list (e.g. a subscriber can remove itself)
 
 #### How updates are deduplicated
 
