@@ -28,6 +28,18 @@ describe('trkl observables', ()=> {
 		expect(listener).toHaveBeenCalledWith(newValue, oldValue);
 	});
 
+	it('Filters duplicate subscriptions', () => {
+		const listener = jasmine.createSpy('listener');
+		const observable = trkl(1);
+
+		observable.subscribe(listener);
+		observable.subscribe(listener);
+
+		observable(2);
+		
+		expect(listener).toHaveBeenCalledTimes(1);
+	})
+
 	it('A subscriber can be run immediately', ()=> {
 		const value = {};
 		const observable = trkl(value);
@@ -182,7 +194,7 @@ describe('A computed', ()=> {
 			})
 		};
 
-		expect(attachCircular).toThrow(Error('Circular computation detected'));
+		expect(attachCircular).toThrow(Error('Circular computation'));
 	});
 });
 
