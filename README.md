@@ -1,4 +1,7 @@
+![Logo](logo.png)
+
 # trkl
+
 Reactive JavaScript programming in less than half a kilobyte.
 
 For just a meagre **393 bytes** (minified and gzipped), you get
