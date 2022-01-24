@@ -126,7 +126,7 @@ const reader = trkl.computed(()=> {
 
 print(reader()); // 'A'
 
-readB(false);
+readA(false);
 
 print(reader()); // 'B'
 ```
