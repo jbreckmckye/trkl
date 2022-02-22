@@ -204,6 +204,29 @@ This will only work if your objects / arrays are JSON-serializable, though.
 
 Remove the specified function as a subscriber.
 
+## React hooks example
+
+You can easily make a stateful hook out of a Trkl observable. Use this to create a 'global' state hook:
+
+```typescript
+import { useState, useEffect } from 'react';
+
+const greeting = trkl('hello');
+
+export function useGreeting() {
+  const [ state, setState ] = useState(greeting());
+
+  useEffect(() => {
+    greeting.subscribe(setState)
+
+    return () => greeting.unsubscribe(setState); // works fine as the setState function is stable between renders :-)
+  }, []);
+
+  return [ state, greeting ];
+}
+```
+
+
 ## Why 'trkl'?
 
 Because it's like a stream, except smaller (a 'trickle'), except even smaller than that ('trkl').
