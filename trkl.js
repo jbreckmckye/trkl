@@ -44,7 +44,7 @@ function trkl(value) {
     function read () {
         var runningComputation = computedTracker[computedTracker.length - 1];
         if (runningComputation) {
-            subscribe(runningComputation[0]);
+            subscribe(runningComputation);
         }
         return value;
     }
@@ -54,14 +54,10 @@ function trkl(value) {
 
 trkl['computed'] = fn => {
     var self = trkl();
-    var computationToken = [runComputed]
 
-    runComputed();
-    return self;
-
-    function runComputed() {
-        detectCircularity(computationToken);
-        computedTracker.push(computationToken);
+    function computation() {
+        detectCircularity(computation);
+        computedTracker.push(computation);
         var errors, result;
         try {
             result = fn();
@@ -74,6 +70,9 @@ trkl['computed'] = fn => {
         }
         self(result);
     }
+
+    computation();
+    return self;
 };
 
 trkl['from'] = executor => {
