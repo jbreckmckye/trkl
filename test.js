@@ -1,5 +1,5 @@
 'use strict';
-let trkl = window.trkl;
+const trkl = require('./trkl');
 
 describe('trkl observables', ()=> {
 
@@ -19,7 +19,7 @@ describe('trkl observables', ()=> {
 	it('Can be subscribed to', ()=> {
 		const oldValue = {};
 		const newValue = {};
-		const listener = jasmine.createSpy('listener');
+		const listener = jest.fn();
 		const observable = trkl(oldValue);
 		
 		observable.subscribe(listener);
@@ -29,7 +29,7 @@ describe('trkl observables', ()=> {
 	});
 
 	it('Filters duplicate subscriptions', () => {
-		const listener = jasmine.createSpy('listener');
+		const listener = jest.fn();
 		const observable = trkl(1);
 
 		observable.subscribe(listener);
@@ -43,7 +43,7 @@ describe('trkl observables', ()=> {
 	it('A subscriber can be run immediately', ()=> {
 		const value = {};
 		const observable = trkl(value);
-		const listener = jasmine.createSpy('listener');
+		const listener = jest.fn();
 
 		observable.subscribe(listener, true);
 
@@ -52,7 +52,7 @@ describe('trkl observables', ()=> {
 
 	it('Can be unsubscribed from', ()=> {
 		const observable = trkl();
-		const listener = jasmine.createSpy('listener');
+		const listener = jest.fn();
 
 		observable.subscribe(listener);
 		observable.unsubscribe(listener);
@@ -63,10 +63,10 @@ describe('trkl observables', ()=> {
 
 	it('Subscribers can remove themselves without disrupting others', ()=> {
 		const observable = trkl();
-		const listener1 = jasmine.createSpy('listener 1').and.callFake(()=> {
-			observable.unsubscribe(listener1);
-		});
-		const listener2 = jasmine.createSpy('listener 2');
+		const listener1 = jest.fn(
+			() => observable.unsubscribe(listener1)
+		);
+		const listener2 = jest.fn();
 
 		observable.subscribe(listener1);
 		observable.subscribe(listener2);
@@ -82,7 +82,7 @@ describe('trkl observables', ()=> {
 	it('filters out duplicate writes (if primitives)', ()=> {
 		const observable = trkl(1);
 		const symbol = Symbol();
-		const listener = jasmine.createSpy('listener');
+		const listener = jest.fn();
 
 		observable.subscribe(listener);
 
@@ -94,49 +94,48 @@ describe('trkl observables', ()=> {
 		observable('a string');
 		expect(listener).toHaveBeenCalledTimes(1);
 
-        observable(true);
-        expect(listener).toHaveBeenCalledTimes(2);
-        observable(true);
-        expect(listener).toHaveBeenCalledTimes(2);
+		observable(true);
+		expect(listener).toHaveBeenCalledTimes(2);
+		observable(true);
+		expect(listener).toHaveBeenCalledTimes(2);
 
-        observable(null);
-        expect(listener).toHaveBeenCalledTimes(3);
-        observable(null);
-        expect(listener).toHaveBeenCalledTimes(3);
+		observable(null);
+		expect(listener).toHaveBeenCalledTimes(3);
+		observable(null);
+		expect(listener).toHaveBeenCalledTimes(3);
 
-        observable(undefined);
-        expect(listener).toHaveBeenCalledTimes(4);
-        observable(undefined);
-        expect(listener).toHaveBeenCalledTimes(4);
+		observable(undefined);
+		expect(listener).toHaveBeenCalledTimes(4);
+		observable(undefined);
+		expect(listener).toHaveBeenCalledTimes(4);
 
-        observable(symbol);
-        expect(listener).toHaveBeenCalledTimes(5);
-        observable(symbol);
-        expect(listener).toHaveBeenCalledTimes(5);
+		observable(symbol);
+		expect(listener).toHaveBeenCalledTimes(5);
+		observable(symbol);
+		expect(listener).toHaveBeenCalledTimes(5);
 	});
 
 	it('does not filter out duplicate writes of objects or arrays', ()=> {
-        const array = [];
-        const object = {};
+		const array = [];
+		const object = {};
 
 		const observable = trkl(array);
-        const listener = jasmine.createSpy('listener');
+		const listener = jest.fn();
 
-        observable.subscribe(listener);
+		observable.subscribe(listener);
 
-        observable(array);
-        expect(listener).toHaveBeenCalledTimes(1);
+		observable(array);
+		expect(listener).toHaveBeenCalledTimes(1);
 
-        observable(array);
-        expect(listener).toHaveBeenCalledTimes(2);
+		observable(array);
+		expect(listener).toHaveBeenCalledTimes(2);
 
-        observable(object);
-        expect(listener).toHaveBeenCalledTimes(3);
+		observable(object);
+		expect(listener).toHaveBeenCalledTimes(3);
 
-        observable(object);
-        expect(listener).toHaveBeenCalledTimes(4);
-    });
-
+		observable(object);
+		expect(listener).toHaveBeenCalledTimes(4);
+	});
 });
 
 describe('A computed', ()=> {
@@ -199,14 +198,13 @@ describe('A computed', ()=> {
 });
 
 describe('trkl.from', ()=> {
-
 	it('creates an observable', ()=> {
 		const result = trkl.from(()=> {});
 		expect(typeof result).toBe('function');
 	});
 
 	it('passes the observable to the executor', ()=> {
-		const executor = jasmine.createSpy('executor');
+		const executor = jest.fn();
 		const observable = trkl.from(executor);
 		expect(executor).toHaveBeenCalledWith(observable);
 	});
